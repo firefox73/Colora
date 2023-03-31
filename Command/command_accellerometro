@@ -1,4 +1,4 @@
-{
+[{
   "Comandi": {
     "Command_mode_entry": {
       "cmd": "$$$",
@@ -73,4 +73,4 @@
       }
     }
   }
-}
+}]

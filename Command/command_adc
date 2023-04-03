@@ -1,0 +1,21 @@
+{
+  "Comandi": {
+    "Command_mode_entry": {
+      "cmd": "###",
+      "descrizione": "Ingresso in command mode",
+      "esempio": "###"
+    },
+    "Comandi_ADC": {
+      "Intestazione_ADC": {
+        "cmd": "",
+        "descrizione": "Comandi ADC",
+        "esempio": ""
+      },
+      "Ingresso_analogico": {
+        "cmd": "AT+ADC1=",
+        "descrizione": "Richiesta del valore letto all'ingresso analogico.",
+        "esempio": "AT+ADC1=?,0001,10;"
+      }
+    }
+  }
+}

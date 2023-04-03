@@ -1,0 +1,36 @@
+[{
+  "Comandi": {
+    "Command_mode_entry": {
+      "cmd": "###",
+      "descrizione": "Ingresso in command mode",
+      "esempio": "###"
+    },
+    "Comandi_EVB": {
+      "Intestazione_EVB": {
+        "cmd": "",
+        "descrizione": "Comandi EVB",
+        "esempio": ""
+      },
+      "evb1": {
+        "cmd": "AT+EVB1=",
+        "descrizione": "il comando richiede lo stato della elettrovalvola1 (evb1) o set dello sato",
+        "esempio": "AT+EVB1=en_dis_evb1,0001,10;"
+      },
+      "evb2": {
+        "cmd": "AT+EVB2=",
+        "descrizione": "il comando richiede lo stato della elettrovalvola2 (evb2) o set dello sato",
+        "esempio": "AT+EVB2=en_dis_evb1,0001,10;"
+      },
+      "evba": {
+        "cmd": "AT+EVBA=",
+        "descrizione": "il comando richiede lo stato delle elettrovalvole(evba) o set dello sato",
+        "esempio": "AT+EVBA=en_dis_evb1,0001,10;"
+      },
+      "durata_impulso": {
+        "cmd": "AT+EVBT=",
+        "descrizione": "il comando richiede la durata dell'impulso applicato al driver di pilotaggio delle elettrovalvole o di set",
+        "esempio": "AT+EVBT=time_driver,0001,10;"
+      }
+    }
+  }
+}]

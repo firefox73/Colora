@@ -1,0 +1,66 @@
+[{
+  "Comandi": {
+    "Command_mode_entry": {
+      "cmd": "###",
+      "descrizione": "Ingresso in command mode",
+      "esempio": "###"
+    },
+    "Comandi_GSM_NBIoT": {
+      "Intestazione_GSM_NBIoT": {
+        "cmd": "",
+        "descrizione": "Comandi GSM_NBIoT",
+        "esempio": ""
+      },
+      "Access_point_name": {
+        "cmd": "AT+APNM=",
+        "descrizione": "Set dell'Access Point NaMe (sono previsti un massimo di 20 caratteri per il name) (Questi parametri vengono salvati anche in EEPROM interna del micro)",
+        "esempio": "AT+APNM=xxxx;"
+      },
+      "Host_name": {
+        "cmd": "AT+HOST=",
+        "descrizione": "Set dell'Host name (sono previsti un massimo di 20 caratteri)(Questi parametri vengono salvati anche in EEPROM interna del micro)",
+        "esempio": "AT+HOST=xxxx;"
+      },
+      "Connection_name": {
+        "cmd": "AT+NAME=",
+        "descrizione": "Set della Connection Name (sono previsti un massimo di 20 caratteri)(Questi parametri vengono salvati anche in EEPROM interna del micro)",
+        "esempio": "AT+NAME=xxxx;"
+      },
+      "Porta_remota": {
+        "cmd": "AT+PORT=",
+        "descrizione": "Set della porta remota a cui ci si deve collegare(Questi parametri vengono salvati anche in EEPROM interna del micro)",
+        "esempio": "AT+PORT=xx;"
+      },
+      "Porta_locale": {
+        "cmd": "AT+LPRT=",
+        "descrizione": "Set della porta locale a cui ci si deve collegare(Questi parametri vengono salvati anche in EEPROM interna del micro)",
+        "esempio": "AT+LPRT=xx;"
+      },
+      "Tipo_comunicazione": {
+        "cmd": "AT+CTYP=",
+        "descrizione": "Set o get richiesta tipo di comunicazione 0:TCP 1:UDP ( in eep)",
+        "esempio": "AT+CTYP=xx;"
+      },
+      "Handshake": {
+        "cmd": "AT+HDSH=",
+        "descrizione": "Set o get richiesta dell’handshake CoLora 0:Disable 1:Enable (in eep)",
+        "esempio": "AT+HDSH=xx;"
+      },
+      "Tempo_refresh": {
+        "cmd": "AT+TREF=",
+        "descrizione": "set e richiesta del tempo di refresh su vinoled(questa deve aggiornare lo scheduler)",
+        "esempio": "AT+TREF=xx;"
+      },
+      "Configurazione_corrente": {
+        "cmd": "AT+CNFG=",
+        "descrizione": "Set o get della configurazione corrente con risposta del tipo CNFG=nbiot.tids.tim.it,ns.coing.it,TCP,NAME:nbiot,2,9999,5685;\nSono presenti 3 configurazione predefinite\n0:TM_Colora -> APNM=TM, HOST=ns.coing.it,CTYPE=TCP,NAME=IMEI[10-15],2 PORT=9999,HDSH =1\n1:OLVT_Colora -> APNM=nbiot.tids.tim.it, HOST=ns.coing.it,CTYPE=TCP,NAME=IMEI[10-15],2, PORT=9999,HDSH =1\n2:OLVT_Icon->APNM=nbiot.tids.tim.it,HOST=192.168.200.225,CTYPE=UDP,NAME=NA,PORT=5681,LPRT=5685,\nHDSH =0.",
+        "esempio": "AT+CNFG=?;"
+      },
+      "contatori_tx": {
+        "cmd": "AT+DBCT=",
+        "descrizione": "get o azzeramento dei contatori relativi al numero di tx, la risposta è del tipo \"DBCT:NumTxSucc,NumTxFailed;\" dove il primo campo riporta il numero di tx concluse con successo e il secondo riporta il numero di tx abortite",
+        "esempio": "AT+DBCT=0;"
+      }
+    }
+  }
+}]

@@ -1,0 +1,46 @@
+[{
+  "Comandi": {
+    "Command_mode_entry": {
+      "cmd": "###",
+      "descrizione": "Ingresso in command mode",
+      "esempio": "###"
+    },
+    "Comandi_client_mbus": {
+      "Intestazione_client_mbus": {
+        "cmd": "",
+        "descrizione": "Comandi client_mbus",
+        "esempio": ""
+      },
+      "record": {
+        "cmd": "AT+RDSN=",
+        "descrizione": "Get di tutti i record o ultimi n_record, contenenti i serial number dei dispositivi collegati su M-Bus. L'invio su modulo NbIoT viene frazionato nel caso non sia possibile inviare in un solo pacchetto tutti i dati disponibili.",
+        "esempio": "AT+RDSN=n_record-?,0001,10;"
+      },
+      "record_serial": {
+        "cmd": "AT+RDSN=",
+        "descrizione": "Get dei serial number allocati tra la pos1 e pos 2",
+        "esempio": "AT+RDSN=rec_pos1-rec_pos2-?,0001,10;"
+      },
+      "nuovo_serial": {
+        "cmd": "AT+WRSN=",
+        "descrizione": "comando di richiesta scrittura di un nuovo serial number il quale sarà inserito in coda a record/serial number già presenti in epprom o scrittura di n-record memorizzati in coda a quelli già present o richiesta di scrittura di n-record a partire dalla pos_start_wrtie",
+        "esempio": "AT+WRSN=n_rec-record_1-record_2-record_n,0001,10;"
+      },
+      "delete_serial": {
+        "cmd": "AT+ERSN=",
+        "descrizione": "comando per richiedere la cancellazzione dei record/serial number presente nella posizione index_erase_rec o comando per richiedere la cancellazzione di tutti i record/seriali memorizzati",
+        "esempio": "AT+ERSN=*,0001,10;"
+      },
+      "interrogazione_serial": {
+        "cmd": "AT+MBUS=",
+        "descrizione": "comando per richiesta interrogazione del dispostivo con serial number indicato nel comando stesso o interrogazione di tutti i disposittivi collegati su M-bus o richiesta di interruzzione di procedura di interrogazione dei dispositivi",
+        "esempio": "AT+MBUS=serial_number,0001,10;"
+      },
+      "numero_serial": {
+        "cmd": "AT+VLSN=",
+        "descrizione": "comando per richiesta del numero di record/serial number presenti in eeprom",
+        "esempio": "AT+VLSN=?,0001,10;"
+      }
+    }
+  }
+}]

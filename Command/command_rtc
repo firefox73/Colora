@@ -1,9 +1,9 @@
 [{
 	"Comandi": {
 		"Command_mode_entry": {
-			"cmd": "$$$",
+			"cmd": "###",
 			"descrizione": "Ingresso in command mode",
-			"esempio": "$$$"
+			"esempio": "###"
 		},
 		"Comandi_RTC": {
 			"Intestazione_RTC": {

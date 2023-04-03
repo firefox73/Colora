@@ -1,0 +1,36 @@
+[{
+  "Comandi": {
+    "Command_mode_entry": {
+      "cmd": "###",
+      "descrizione": "Ingresso in command mode",
+      "esempio": "###"
+    },
+    "Comandi_PL": {
+      "Intestazione_PL": {
+        "cmd": "",
+        "descrizione": "Comandi PL",
+        "esempio": ""
+      },
+      "time_to_close": {
+        "cmd": "AT+T2CS=",
+        "descrizione": "Get O set dei valori di reference usati per il Time to close del PL",
+        "esempio": "AT+T2CS=T2C_reference-T2C_percent,0001,10;"
+      },
+      "time_to_open": {
+        "cmd": "AT+T2OS=",
+        "descrizione": "Get O set dei valori di reference usati per il Time to opemn del PL",
+        "esempio": "AT+T2OS=T2C_reference-T2C_percent,0001,10;"
+      },
+      "tempo_recovery": {
+        "cmd": "AT+TCSA=",
+        "descrizione": "Get del tempo di recovery PL o Set del tempo di massimo per cui viene analizzata una condizione di allarme su PL",
+        "esempio": "AT+TCSA=Time,0001,10;"
+      },
+      "valori_percentuali": {
+        "cmd": "AT+AOTH=",
+        "descrizione": "Get valori percentuali associati alla soglia di high-g o set valori percentuali cui riferirsi rispetto alla soglia",
+        "esempio": "AT+AOTH=TH_PERC,TH1_PERC,0001,10;"
+      }
+    }
+  }
+}]

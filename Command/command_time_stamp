@@ -1,0 +1,26 @@
+[{
+  "Comandi": {
+    "Command_mode_entry": {
+      "cmd": "###",
+      "descrizione": "Ingresso in command mode",
+      "esempio": "###"
+    },
+    "Comandi_time_stamp": {
+      "Intestazione_time_stamp": {
+        "cmd": "",
+        "descrizione": "Comandi time_stamp",
+        "esempio": ""
+      },
+      "Data_RTC": {
+        "cmd": "AT+RSTM=",
+        "descrizione": "Get o set della data e ora del dispositivo.",
+        "esempio": "AT+RSTM=?;/AT+RSTM=2019-09-18 16:15:12,FFFF,FF;"
+      },
+      "sincronizzazione": {
+        "cmd": "AT+RSTM=",
+        "descrizione": "comando che consente l'eventuale sincronizzazione del time stamp del modulo con il time stamp acquisito da server NTP in dettaglio i campi:\nEn_Dis=0/1, con valore unitario, viene avviata la procedura di sincronizzazione;\nUrl_IP specifica l'url o l'indirizzo IP del server NTP con cui il modulo NbIoT deve sincronizzarsi (il server di deafult è quello dell'Istituto Nazionale di Ricerca Metrologica);\n[Zone] se specificato fa riferimento al time zone, il campo è opzionale.",
+        "esempio": "AT+RSTM=En_Dis,Url_IP,[Zone],0001,10;"
+      }
+    }
+  }
+}]

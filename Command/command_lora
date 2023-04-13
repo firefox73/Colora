@@ -114,7 +114,7 @@
       "assegnazione_JOIN_Node": {
         "cmd": "AT+JOIN=",
         "descrizione": "Il comando consente di assegnare un indirizzo al nodo, al suo gruppo di appartenenza e gli indirizzi di device e gruppo a cui trasmettere.",
-        "esempio": "AT+JOIN=000162FF-000A,10,FFFF,FF;"
+        "esempio": "AT+JOIN=000162FF-000A-10,FFFF,FF;"
       },
       "Tipo_trasmissione": {
         "cmd": "AT+MCNF=",

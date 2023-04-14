@@ -13,7 +13,7 @@
       },
       "Scheduling": {
         "cmd": "AT+SCHD=",
-        "descrizione": "Disabilitazione e abilitazione di uno scheduling o get.",
+        "descrizione": "AT+SCHD-Disabilitazione e abilitazione di uno scheduling o get.",
         "esempio": "AT+SCHD=1-0;-dis. sch.1/AT+SCHD=ID_sch-EnDis-sec-minute-hour-day-of-month-month-day-of-week-year,0001,10;"
       }
     }

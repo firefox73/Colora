@@ -13,17 +13,17 @@
       },
       "aggioranemento_memoria": {
         "cmd": "AT+UPDT=",
-        "descrizione": "Il comando consente l'avvio della procedura di aggiornamento della memoria programma riservata a questo scopo, previo controllo dei due parametri (la CRC totale inserita nel comando deve corrispondere a quella calcolata in locale).",
+        "descrizione": "AT+UPDT-Il comando consente l'avvio della procedura di aggiornamento della memoria programma riservata a questo scopo, previo controllo dei due parametri (la CRC totale inserita nel comando deve corrispondere a quella calcolata in locale).",
         "esempio": "AT+UPDT=num_tot_blocchi-CRC_totale_blocchi,0001,10;"
       },
       "write_paccetti": {
         "cmd": "AT+WRFL=",
-        "descrizione": "Il comando consente l'avvio della procedura di aggiornamento della memoria programma riservata a questo scopo, previo controllo dei due parametri (la CRC totale inserita nel comando deve corrispondere a quella calcolata in locale).",
+        "descrizione": "AT+WRFL-Il comando consente l'avvio della procedura di aggiornamento della memoria programma riservata a questo scopo, previo controllo dei due parametri (la CRC totale inserita nel comando deve corrispondere a quella calcolata in locale).",
         "esempio": "AT+WRFL=num_blocco_corrente/num_tot_blocchi-blocco_lun_wrfl_cmd-blocco_codice>-crc1-..-blocco_codice_n-crc_n,0001,10;"
       },
       "ota": {
         "cmd": "AT+CKFW=",
-        "descrizione": "get della versione ota presente sul sistema o permette al nodo interpellao di controllare se la sua versione ota è allineata a quella del server",
+        "descrizione": "AT+CKFW-get della versione ota presente sul sistema o permette al nodo interpellao di controllare se la sua versione ota è allineata a quella del server",
         "esempio": "AT+CKFW=ota_version,0001,10;"
       }
     }

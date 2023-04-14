@@ -13,37 +13,37 @@
       },
       "Soglia_temp_alta": {
         "cmd": "AT+THTR=",
-        "descrizione": "get o set del valore di soglia di temperatura alta",
+        "descrizione": "AT+THTR-get o set del valore di soglia di temperatura alta",
         "esempio": "AT+THTR=Threshold_high_t,0001,10;"
       },
       "Soglia_temp_bassa": {
         "cmd": "AT+TLTR=",
-        "descrizione": "get o set del valore di soglia di temperatura bassa",
+        "descrizione": "AT+TLTR-get o set del valore di soglia di temperatura bassa",
         "esempio": "AT+TLTR=Threshold_low_t,0001,10;"
       },
       "Soglia_um_alta": {
         "cmd": "AT+UHTR=",
-        "descrizione": "get o set del valore di soglia di umidità alta",
+        "descrizione": "AT+UHTR-get o set del valore di soglia di umidità alta",
         "esempio": "AT+UHTR=Threshold_high_t,0001,10;"
       },
       "Soglia_um_bassa": {
         "cmd": "AT+ULTR=",
-        "descrizione": "get o set del valore di soglia di umidità bassa",
+        "descrizione": "AT+ULTR-get o set del valore di soglia di umidità bassa",
         "esempio": "AT+ULTR=Threshold_low_t,0001,10;"
       },
       "Soglia_custom": {
         "cmd": "AT+FPTR=",
-        "descrizione": "get o set del valore di soglia customizzato nell'algoritmo di controllo tu e lagato alla specifica applicazione",
+        "descrizione": "AT+FPTR-get o set del valore di soglia customizzato nell'algoritmo di controllo tu e lagato alla specifica applicazione",
         "esempio": "AT+FPTR=Threshold_custom,0001,10;"
       },
       "isteresi": {
         "cmd": "AT+ISTR=",
-        "descrizione": "get o set del valore di isteresi fissato",
+        "descrizione": "AT+ISTR-get o set del valore di isteresi fissato",
         "esempio": "AT+ISTR=val_istr,0001,10;"
       },
       "offset": {
         "cmd": "AT+OFFS=",
-        "descrizione": "get o set del valore di offset che può assumere anche valori negativi",
+        "descrizione": "AT+OFFS-get o set del valore di offset che può assumere anche valori negativi",
         "esempio": "AT+OFFS=val_offset,0001,10;"
       }
     }

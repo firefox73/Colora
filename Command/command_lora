@@ -13,112 +13,112 @@
       },
       "Group_Address_Tx": {
         "cmd": "AT+TXGR=",
-        "descrizione": "Get o set dell'indirizzo di gruppo a cui trasmettere (in HEX)",
+        "descrizione": "AT+TXGR-Get o set dell'indirizzo di gruppo a cui trasmettere (in HEX)",
         "esempio": "AT+TXGR=?;/10;"
       },
       "Device_Address_Tx": {
         "cmd": "AT+TXAD=",
-        "descrizione": "Get o set dell'indirizzo del device a cui trasmettere (in HEX)",
+        "descrizione": "AT+TXAD-Get o set dell'indirizzo del device a cui trasmettere (in HEX)",
         "esempio": "AT+TXAD=?;/FFFE;"
       },
       "Group_Address_Rx": {
         "cmd": "AT+RXGR=",
-        "descrizione": "Get o set dell'indirizzo di gruppo da cui trasmettere (in HEX)",
+        "descrizione": "AT+RXGR-Get o set dell'indirizzo di gruppo da cui trasmettere (in HEX)",
         "esempio": "AT+RXGR=?;/10;"
       },
       "Device_Address_Rx": {
         "cmd": "AT+RXAD=",
-        "descrizione": "Get o set dell'indirizzo del device da cui trasmettere (in HEX)",
+        "descrizione": "AT+RXAD-Get o set dell'indirizzo del device da cui trasmettere (in HEX)",
         "esempio": "AT+RXAD=?;/0002;"
       },
       "MAC_Address": {
         "cmd": "AT+MACD=",
-        "descrizione": "Get MAC address del dispositivo.",
+        "descrizione": "AT+MACD-Get MAC address del dispositivo.",
         "esempio": "AT+MACD=?;"
       },
       "cmd_MAC_Address": {
         "cmd": "AT+MACD=",
-        "descrizione": "Il comando consente di far arrivare al nodo un comando, inserito nel payload, questo sarà preso in carico solo dal nodo con il MAC address specificato",
+        "descrizione": "AT+MACD-Il comando consente di far arrivare al nodo un comando, inserito nel payload, questo sarà preso in carico solo dal nodo con il MAC address specificato",
         "esempio": "AT+MACD=MACD_DEST_ADD-AT_CMD[,rx_add,gr_add];"
       },
       "Frequenza": {
         "cmd": "AT+FREQ=",
-        "descrizione": "Geo o set della frequenza RF in Hz",
+        "descrizione": "AT+FREQ-Get o set della frequenza RF in Hz",
         "esempio": "AT+FREQ=?;/868000;"
       },
       "Spread_factor": {
         "cmd": "AT+SPRF=",
-        "descrizione": "Get o set dello spread factor da utiizzare",
+        "descrizione": "AT+SPRFGet o set dello spread factor da utiizzare",
         "esempio": "AT+SPRF=?;/?,0000,10;"
       },
       "Error_coding": {
         "cmd": "AT+CORA=",
-        "descrizione": "Get o set dell'error coding",
+        "descrizione": "AT+CORA-Get o set dell'error coding",
         "esempio": "AT+CORA=?;/?,0000,10;"
       },
       "Valore_potenza_trasmissione": {
         "cmd": "AT+TXPW=",
-        "descrizione": "Get o set della potenza di trasmissione",
+        "descrizione": "AT+TXPW-Get o set della potenza di trasmissione",
         "esempio": "AT+TXPW=?;/?,0000,10;"
       },
       "Caratteristiche_trasmissione": {
         "cmd": "AT+TXCT=",
-        "descrizione": "Get o set delle caratterisctiche di trasmissione",
+        "descrizione": "AT+TXCT-Get o set delle caratterisctiche di trasmissione",
         "esempio": "AT+TXCT=?;/?,0000,10;"
       },
       "Soglia_tx": {
         "cmd": "AT+TXWT=",
-        "descrizione": "Get o set della soglia di tx con LBT attivo",
+        "descrizione": "AT+TXWT-Get o set della soglia di tx con LBT attivo",
         "esempio": "AT+TXWT=?;/?,0000,10;"
       },
       "Finestra_rx": {
         "cmd": "AT+RXCT=",
-        "descrizione": "Get o set dell' abilitazione finestra rx",
+        "descrizione": "AT+RXCT-Get o set dell' abilitazione finestra rx",
         "esempio": "AT+RXCT=?;/?,0000,10;"
       },
       "Durata_finestra_ricezione": {
         "cmd": "AT+RXWT=",
-        "descrizione": "Get o set della durata della finestra di ricezione",
+        "descrizione": "AT+RXWT-Get o set della durata della finestra di ricezione",
         "esempio": "AT+RXWT=?;/?,0000,10;"
       },
       "Led_comunicazione_radio": {
         "cmd": "AT+LDCT=",
-        "descrizione": "Get o set dei led di configurazione per la comunicazione radio",
+        "descrizione": "AT+LDCT-Get o set dei led di configurazione per la comunicazione radio",
         "esempio": "AT+LDCT=?;/?,0000,10;"
       },
       "Impostazioni_tipo_pacchetto": {
         "cmd": "AT+MISC=",
-        "descrizione": "Get o set delle impostazioni tipo pacchetto",
+        "descrizione": "AT+MISC-Get o set delle impostazioni tipo pacchetto",
         "esempio": "AT+MISC=?;/?,0000,10;"
       },
       "Datarate_FSK": {
         "cmd": "AT+FSKD=",
-        "descrizione": "Get o set del datarate FSK",
+        "descrizione": "AT+FSKD-Get o set del datarate FSK",
         "esempio": "AT+FSKD=?;/?,0000,10;"
       },
       "Power_saving": {
         "cmd": "AT+PWRS=",
-        "descrizione": "Get o set del power saving",
+        "descrizione": "AT+PWRS-Get o set del power saving",
         "esempio": "AT+PWRS=?;/?,0000,10;"
       },
       "Key_algoritmo_AES": {
         "cmd": "AT+AESK=",
-        "descrizione": "Get o set della key per l'algoritmo AES",
+        "descrizione": "AT+AESK-Get o set della key per l'algoritmo AES",
         "esempio": "AT+AESK=?;/?,0000,10;"
       },
       "JOIN_Node": {
         "cmd": "AT+JOIN=",
-        "descrizione": "La risposta comprende più informazioni: il time stamp, il MAC address e il modello della scheda.",
+        "descrizione": "AT+JOIN-La risposta comprende più informazioni: il time stamp, il MAC address e il modello della scheda.",
         "esempio": "AT+JOIN=?;"
       },
       "assegnazione_JOIN_Node": {
         "cmd": "AT+JOIN=",
-        "descrizione": "Il comando consente di assegnare un indirizzo al nodo, al suo gruppo di appartenenza e gli indirizzi di device e gruppo a cui trasmettere.",
+        "descrizione": "AT+JOIN-Il comando consente di assegnare un indirizzo al nodo, al suo gruppo di appartenenza e gli indirizzi di device e gruppo a cui trasmettere.",
         "esempio": "AT+JOIN=000162FF-000A-10,FFFF,FF;"
       },
       "Tipo_trasmissione": {
         "cmd": "AT+MCNF=",
-        "descrizione": "Get o set del tipo di trasmissione unreliable oppure confirmed",
+        "descrizione": "AT+MCNF-Get o set del tipo di trasmissione unreliable oppure confirmed",
         "esempio": "AT+MCNF=?;/?,0000,10;"
       }
     }

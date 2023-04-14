@@ -13,7 +13,7 @@
       },
       "Ingresso_analogico": {
         "cmd": "AT+ADC1=",
-        "descrizione": "Richiesta del valore letto all'ingresso analogico.",
+        "descrizione": "AT+ADC1-Richiesta del valore letto all'ingresso analogico.",
         "esempio": "AT+ADC1=?,0001,10;"
       }
     }

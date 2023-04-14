@@ -13,32 +13,32 @@
       },
       "Valore_temperatura": {
         "cmd": "AT+SRUM=",
-        "descrizione": "Richiesta ultimo valore di temperatura rilevato",
+        "descrizione": "AT+SRUM-Richiesta ultimo valore di temperatura rilevato",
         "esempio": "AT+SRUM=?,0001,10;"
       },
       "Valore_umidita": {
         "cmd": "AT+SRTP=",
-        "descrizione": "Richiesta ultimo valore di umidità rilevato",
+        "descrizione": "AT+SRTP-Richiesta ultimo valore di umidità rilevato",
         "esempio": "AT+SRTP=?,0001,10;"
       },
       "Valore_temperatura_dopo_umidita": {
         "cmd": "AT+SRTU=",
-        "descrizione": "Richiesta di ultimo valore di temperatura rilevato subito dopo una misura di umidità (restituisce un valore solo dal sensore integrato su CLR-ED e se abilitata la funzionalità)",
+        "descrizione": "AT+SRTU-Richiesta di ultimo valore di temperatura rilevato subito dopo una misura di umidità (restituisce un valore solo dal sensore integrato su CLR-ED e se abilitata la funzionalità)",
         "esempio": "AT+SRTU=?,0001,10;"
       },
       "Registro_controllo_sensore": {
         "cmd": "AT+SRSI=",
-        "descrizione": "Get del registro di controllo del sensore integrato (restituisce un valore solo se abilitata questa funzionalità)",
+        "descrizione": "AT+SRSI-Get del registro di controllo del sensore integrato (restituisce un valore solo se abilitata questa funzionalità)",
         "esempio": "AT+SRSI=?,0001,10;"
       },
       "Versione_firmware_sensore": {
         "cmd": "AT+SSFW=",
-        "descrizione": "Get della versione del fw sensore T/H su CLR-ED (restituisce un valore solo se abilitata questa funzionalità)",
+        "descrizione": "AT+SSFW-Get della versione del fw sensore T/H su CLR-ED (restituisce un valore solo se abilitata questa funzionalità)",
         "esempio": "AT+SSFW=?,0001,10;"
       },
       "Chip_ID_sensore": {
         "cmd": "AT+SRID=",
-        "descrizione": "Get del chip id del sensore T/H su CLR-ED (restituisce un valore solo se abilitata questa funzionalità)",
+        "descrizione": "AT+SRID-Get del chip id del sensore T/H su CLR-ED (restituisce un valore solo se abilitata questa funzionalità)",
         "esempio": "AT+SRID=?,0001,10;"
       }
     }

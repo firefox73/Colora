@@ -13,17 +13,17 @@
       },
       "contatori": {
         "cmd": "AT+IMPL=",
-        "descrizione": "il comando consente di fare una richiesta in modo da inviare via radio una telemetria customizzata per il meter o permetti fare un set dei contatori del meter",
+        "descrizione": "AT+IMPL-il comando consente di fare una richiesta in modo da inviare via radio una telemetria customizzata per il meter o permetti fare un set dei contatori del meter",
         "esempio": "AT+IMPL=val-val_contatore,0001,10;"
       },
       "portata": {
         "cmd": "AT+FLOW=",
-        "descrizione": "comando di get o di set del valore della portata fissa",
+        "descrizione": "AT+FLOW-comando di get o di set del valore della portata fissa",
         "esempio": "AT+FLOW=flow_meter,0001,10;"
       },
       "durata": {
         "cmd": "AT+PULS=",
-        "descrizione": "comando di get durata impulso da rilevare o set durata impulso da considerare per aggiornare contatore impulsi",
+        "descrizione": "AT+PULS-comando di get durata impulso da rilevare o set durata impulso da considerare per aggiornare contatore impulsi",
         "esempio": "AT+PULS=val_pulse,0001,10;"
       }
     }

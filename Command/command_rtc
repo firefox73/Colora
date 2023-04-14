@@ -13,7 +13,7 @@
 			},
 			"Calibrazione_RTC": {
 				"cmd": "AT+WRTC=",
-				"descrizione": "Set o get del fattore di calibrazione impostato su RTC",
+				"descrizione": "AT+WRTC-Set o get del fattore di calibrazione impostato su RTC",
 				"esempio": "AT+WRTC=val_calibrazione,0001,10;"
 			}
 		}

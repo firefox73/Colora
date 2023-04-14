@@ -13,12 +13,12 @@
       },
       "id_batteria": {
         "cmd": "AT+BINF=",
-        "descrizione": "comando di get delle info che permettono di identificare la batteria o di set del tipo di batteria e relativa capacità",
+        "descrizione": "AT+BINF-comando di get delle info che permettono di identificare la batteria o di set del tipo di batteria e relativa capacità",
         "esempio": "AT+BINF=id_battery-val_capacità,0001,10;"
       },
       "assorbimento": {
         "cmd": "AT+PWMA=",
-        "descrizione": "Get dei parametri, la cui risposta è del tipo \"PWMA:val_lp,val_run,val_tx;\" dove il primo campo rappresenta l'assorbimento in low power, il secondo l'assorbimento in normale funzionamento e il terzo l'assorbimento in fase di tx o Comando di set dei parametri, questi vengono memorizzati in eeprom e sono i fattori moltiplicativo da applicare alle tre fasi di funzionamento del sistema (low power, run e tx).",
+        "descrizione": "AT+PWMA-Get dei parametri, la cui risposta è del tipo \"PWMA:val_lp,val_run,val_tx;\" dove il primo campo rappresenta l'assorbimento in low power, il secondo l'assorbimento in normale funzionamento e il terzo l'assorbimento in fase di tx o Comando di set dei parametri, questi vengono memorizzati in eeprom e sono i fattori moltiplicativo da applicare alle tre fasi di funzionamento del sistema (low power, run e tx).",
         "esempio": "AT+PWMA=val_lp-val_run-val_tx,0001,10;"
       }
     }

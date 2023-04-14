@@ -13,22 +13,22 @@
       },
       "payload": {
         "cmd": "AT+MODB=",
-        "descrizione": "Nel payload del comando è riportata una stringa in esadecimale da inviare al sensore collegato su seriale1 (che utilizza un protocollo ModBus), La risposta al comando sarà girata verso la seriale2, a cui sarà aggiunta la seguente intestazione \"MODB:\" e terminatore pari a \";\".",
+        "descrizione": "AT+MODB-Nel payload del comando è riportata una stringa in esadecimale da inviare al sensore collegato su seriale1 (che utilizza un protocollo ModBus), La risposta al comando sarà girata verso la seriale2, a cui sarà aggiunta la seguente intestazione \"MODB:\" e terminatore pari a \";\".",
         "esempio": "AT+MODB=xxxxxxxxx,0001,10;"
       },
       "messaggi": {
         "cmd": "AT+MSGX=",
-        "descrizione": "set o get messaggio/comando usato per interrogare il sensore collagato su seriale 1",
+        "descrizione": "AT+MSGX-set o get messaggio/comando usato per interrogare il sensore collagato su seriale 1",
         "esempio": "AT+MSGX=x-lun-zzzzzzzz,0001,10;"
       },
       "hex_to_ascii": {
         "cmd": "AT+HXAS=",
-        "descrizione": "set o get conversione hex to ascii",
+        "descrizione": "AT+HXAS-set o get conversione hex to ascii",
         "esempio": "AT+HXAS=0/1,0001,10;"
       },
       "id_dispositivo": {
         "cmd": "AT+MBUS=",
-        "descrizione": "nel pyload del comando è riportata una stringa in ascii che oindica l'id di un dispositivo",
+        "descrizione": "AT+MBUS-nel pyload del comando è riportata una stringa in ascii che oindica l'id di un dispositivo",
         "esempio": "AT+MBUS=xxx,0001,10;"
       }
     }

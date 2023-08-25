@@ -1,0 +1,164 @@
+{
+  "ruleChain": {
+    "additionalInfo": {
+      "description": "Parsing per i dispositivi heat meter"
+    },
+    "name": "Pulse_Giacomini",
+    "type": "CORE",
+    "firstRuleNodeId": null,
+    "root": false,
+    "debugMode": false,
+    "configuration": null,
+    "externalId": null
+  },
+  "metadata": {
+    "firstNodeIndex": 4,
+    "nodes": [
+      {
+        "additionalInfo": {
+          "description": "update timeseries",
+          "layoutX": 1003,
+          "layoutY": 128
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgTimeseriesNode",
+        "name": "Pulse_Giacomini Update",
+        "debugMode": true,
+        "singletonMode": false,
+        "configuration": {
+          "defaultTTL": 0
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 632,
+          "layoutY": 182
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "DecGTWmsg",
+        "debugMode": true,
+        "singletonMode": false,
+        "configuration": {
+          "jsScript": "//Funzione di decodifica di tutti i messaggi embedded del dispositivo\n//var DecGtw_msg_String=\"telemetryH2O=2021-02-22 18:30:00,1255,1,1,2489,dummy,-57;\";\n//var DecGtw_msg_String=\"telemetry=17:58:30,17.4,39.1,1,3296,0.8,210,0.0,0.0,-18.2,11,0036,14076;\";\n//var EVB1:1;\n//\"MSG\":\"telemetryH2O=2021-02-22 18:30:00,1255,1,1,2489,dummy,-57;\"\n// telemetry_ceng=2021-09-28 10:17:00,6254,3,0319B2A1,-85,-5,20,7D3E,-74,12,33,0,-80;\n// telemetryPL=2022-02-01 09:12:11,11,10,23,5,0,3500,,,,485,0,-69;\n//var attr=0;\n//var output_msg =msg;//output\nvar  DecGtw_msg_String=msg.MSG;\nvar msg=DecGTWmsg(DecGtw_msg_String);\n//extend( output_msg, msg );\n//console.log(output_msg);\n//if (attr==1){ attr=0; return['attributes'];}\n\n\nfunction DecGTWmsg(DecGtw_msg_String){\nvar local_output={};\n//local_output.MSG=DecGtw_msg_String;//da inserire se debug\nlocal_output.ct=msg.ct;\n\n           //calcolo offset timezone in ms\n            var offset = new Date(Number(metadata.ts)).getTimezoneOffset()*60000; \n            var m = new Date(Number(metadata.ts)-offset);\n            var dateString =\n                m.getUTCFullYear() + \"-\" +\n                (\"0\" + (m.getUTCMonth()+1)).slice(-2) + \"-\" +\n                (\"0\" + m.getUTCDate()).slice(-2) + \" \" +\n                (\"0\" + (m.getUTCHours())).slice(-2) + \":\" +\n                (\"0\" + m.getUTCMinutes()).slice(-2) + \":\" +\n                (\"0\" + m.getUTCSeconds()).slice(-2);\n\n           local_output.time=dateString;   \n\nvar telemetry = new RegExp(\"telemetry=\");\nvar telemetryH2O = new RegExp(\"telemetryH2O=\");\nvar telemetry_ceng = new RegExp(\"telemetry_ceng=\");\nvar telemetryPL = new RegExp(\"telemetryPL=\");\nvar DATT = new RegExp(\"DATT:\");\nvar evb = new RegExp(\"EVB\");\nvar Telemetry_arr; //telemetry splitted\nswitch (true) {\n    case telemetry.test(DecGtw_msg_String):\n\t\t\t//console.log(\"telemetry\");\n\t\t\tDecGtw_msg_String = DecGtw_msg_String.replace(telemetry, \"\").substr(0, DecGtw_msg_String.length - 1);\n\t\t\tTelemetry_arr = DecGtw_msg_String.split(',');\n\t\t   // console.log(Telemetry);\n\t\t\t  // console.log(\"len1 \"+ testtel);\n\t\t  // local_output.timestamp=Telemetry_arr[0]; local_output.temperature=Telemetry_arr[1];  // local_output.humidity=Telemetry_arr[2]; \n       //local_output.out_state=Telemetry_arr[3];\n\t\t   //local_output.Batt=Telemetry_arr[4];\n\t\t //  local_output.Batt=Telemetry_arr[6];\n\t\t //  local_output.mc=Telemetry_arr[7];\n       //local_output.current=Telemetry_arr[5];     local_output.power=Telemetry_arr[6];    local_output.ax=Telemetry_arr[7];\n       //local_output.ay=Telemetry_arr[8];          local_output.az=Telemetry_arr[9];         \n       //local_output.sc_pci=Telemetry_arr[10];local_output.sc_ecl=Telemetry_arr[11]; local_output.sc_rssi=Telemetry_arr[12];\n       local_output.Eht=Telemetry_arr[9]; \n       local_output.gr=Telemetry_arr[10]; local_output.addr=Telemetry_arr[11];  local_output.rssi=Telemetry_arr[12];\n        break;\n    case telemetryH2O.test(DecGtw_msg_String):\n            //console.log(\"telemetryH2O\");\n          DecGtw_msg_String = DecGtw_msg_String.replace(telemetryH2O, \"\").substr(0, DecGtw_msg_String.length - 1);\n           Telemetry_arr = DecGtw_msg_String.split(',');\n     // console.log(Telemetry);\n      //Timestamp,IT,DF,RM,IF,dummy,ECL;\n     // local_output.timestamp=Telemetry_arr[0]; \n     // local_output.ImpulsiTotali=Telemetry_arr[1];       \n      local_output.EnergiaTermica=Telemetry_arr[2];\n     // local_output.DirezioneFlusso=Telemetry_arr[3];  \n      //local_output.ImpulsiFlussoInAvanti=Telemetry_arr[4];        \n      //local_output.sc_ecl=Telemetry_arr[5];     \n      local_output.gr=Telemetry_arr[6];\n      local_output.addr=Telemetry_arr[7];\n      local_output.rssi=Telemetry_arr[8];\n        break;\n    case evb.test(DecGtw_msg_String):\n         //console.log(\"evb\");\n         DecGtw_msg_String = DecGtw_msg_String.substr(0, DecGtw_msg_String.length - 1);\n         Telemetry_arr = DecGtw_msg_String.split(':');\n\t\t\t if (Telemetry_arr[1]===\"1\") Telemetry_arr[1]=\" open\";\n\t\t\t if (Telemetry_arr[1]===\"0\") Telemetry_arr[1]=\" close\";\n         local_output.Cmd=Telemetry_arr[0]+Telemetry_arr[1];\n        break;\n    case telemetry_ceng.test(DecGtw_msg_String):\n\t\t\t//console.log(\"telemetry\");\n\t\t\tDecGtw_msg_String = DecGtw_msg_String.replace(telemetry_ceng, \"\").substr(0, DecGtw_msg_String.length - 1);\n\t\t\tTelemetry_arr = DecGtw_msg_String.split(',');\n\t\t   // console.log(Telemetry);\n\t\t\t  // console.log(\"len1 \"+ testtel);\n\t\t   local_output.timestamp=Telemetry_arr[0]; \n\t\t   local_output.EARFCN=Telemetry_arr[1];   \n\t\t   local_output.EARFC_off=Telemetry_arr[2]; \n           local_output.Cell_ID=Telemetry_arr[3];\n\t\t   local_output.RSRP=Telemetry_arr[4];\n\t\t   local_output.RSRQ=Telemetry_arr[5];\n\t\t   local_output.Band=Telemetry_arr[6];\n\t\t   local_output.TAC=Telemetry_arr[7];\n           local_output.RE_RSRP=Telemetry_arr[8];          \n           local_output.SNR=Telemetry_arr[9];         \n           local_output.sc_pci=Telemetry_arr[10];\n           local_output.sc_ecl=Telemetry_arr[11]; \n           local_output.sc_rssi=Telemetry_arr[12];\n        break;     \n    case telemetryPL.test(DecGtw_msg_String):\n\t\t\t//console.log(\"telemetry\");\n\t\t\tDecGtw_msg_String = DecGtw_msg_String.replace(telemetryPL, \"\").substr(0, DecGtw_msg_String.length - 1);\n\t\t\tTelemetry_arr = DecGtw_msg_String.split(',');\n\t\t   // console.log(Telemetry);\n\t\t\t  // console.log(\"len1 \"+ testtel);\n\t\t   local_output.timestamp=Telemetry_arr[0]; \n\t\t   local_output.num_azionamenti_PL=Telemetry_arr[1];  //numero di azionamenti del PL (cicli time2close, time close e time2open) \n\t\t   local_output.T2Oc=Telemetry_arr[2];                // time to open\n           local_output.T2Cc=Telemetry_arr[3];                // time to close\n\t\t   local_output.TCc=Telemetry_arr[4];                 // time close\n\t\t   local_output.PL_state=Telemetry_arr[5];            // byte in cui è possibile inserire la segnalazione di un problema/allarme del sistema PL  \n\t\t   local_output.Batt=Telemetry_arr[6];\n\t\t   //local_output.TAC=Telemetry_arr[7];               // dummy\n           //local_output.RE_RSRP=Telemetry_arr[8];           // dummy\n           //local_output.SNR=Telemetry_arr[9];               // dummy\n           local_output.sc_pci=Telemetry_arr[10];\n           local_output.sc_ecl=Telemetry_arr[11]; \n           local_output.sc_rssi=Telemetry_arr[12];\n        break;    \n    case DATT.test(DecGtw_msg_String):\n\t\t\t//console.log(\"telemetry\");\n\t\t\tDecGtw_msg_String = DecGtw_msg_String.replace(DATT, \"\").substr(0, DecGtw_msg_String.length - 1);\n\t\t\tTelemetry_arr = DecGtw_msg_String.split(',');\n\t\t   // console.log(Telemetry);\n\t\t\t  // console.log(\"len1 \"+ testtel);\n\t\t   //local_output.NodeAttributes=Telemetry_arr[0]; \n\t\t   local_output.model=Telemetry_arr[0];  //numero di azionamenti del PL (cicli time2close, time close e time2open) \n\t\t   local_output.fw=Telemetry_arr[1];                // time to open\n           local_output.hw=Telemetry_arr[2];                // time to close\n\t\t   local_output.eeprom=Telemetry_arr[3];                 // time close\n\t\t   local_output.PL_Calib=Telemetry_arr[4];            // byte in cui è possibile inserire la segnalazione di un problema/allarme del sistema PL  \n\t\t   local_output.Xc=Telemetry_arr[5];\n\t\t   local_output.Yc=Telemetry_arr[6];               // dummy\n           local_output.Zc=Telemetry_arr[7];           // dummy\n           local_output.Ao_axes=Telemetry_arr[8];               // dummy\n           local_output.AoMax=Telemetry_arr[9];\n           local_output.AoTh=Telemetry_arr[10]; \n           local_output.AoTh1=Telemetry_arr[11];\n           local_output.T2Oc_att=Telemetry_arr[12];\n           local_output.T2Cc_att=Telemetry_arr[13];\n           local_output.TCc_att=Telemetry_arr[14];\n           //attr=1;\n           msgType='POST_ATTRIBUTES_REQUEST';\n        break; \n        default:\n}\n\nreturn local_output;\n}\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 999,
+          "layoutY": 275
+        },
+        "type": "org.thingsboard.rule.engine.flow.TbRuleChainInputNode",
+        "name": "Update E-GTW msg",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "ruleChainId": "80a2b890-6102-11ed-a8d7-2f75b54da6f1"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 330,
+          "layoutY": 103
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbMsgTypeSwitchNode",
+        "name": "switch",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "version": 0
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 302,
+          "layoutY": 236
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbJsSwitchNode",
+        "name": "Telemetry/embGTW",
+        "debugMode": true,
+        "singletonMode": false,
+        "configuration": {
+          "jsScript": "\n\nif(msgType === 'POST_TELEMETRY_REQUEST') {\n\nvar msg1 = new RegExp(\"telemetry=\");\nvar msg2 = new RegExp(\"telemetryH2O=\");\n\n//var testmsgx = msgx.test(msg.MSG);\n//var testmodb = modb.test(msg.MSG);\nvar jsonstring=JSON.stringify(msg);\nvar testmsg1 = msg1.test(jsonstring);\nvar testmsg2 = msg2.test(jsonstring);\n\nif ((testmsg1) || (testmsg2) ){\n\n  return ['Meter'];\n}else return ['EmbGTWmsg'];\n}\n"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 561,
+          "layoutY": 359
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgTimeseriesNode",
+        "name": "save msg",
+        "debugMode": true,
+        "singletonMode": false,
+        "configuration": {
+          "defaultTTL": 0,
+          "skipLatestPersistence": false,
+          "useServerTs": false
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1002,
+          "layoutY": 354
+        },
+        "type": "org.thingsboard.rule.engine.flow.TbRuleChainInputNode",
+        "name": "save energy",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "ruleChainId": "c35af670-dace-11ed-86a7-399919bee214"
+        },
+        "externalId": null
+      }
+    ],
+    "connections": [
+      {
+        "fromIndex": 1,
+        "toIndex": 0,
+        "type": "Failure"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 0,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 2,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 6,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 3,
+        "toIndex": 1,
+        "type": "Post telemetry"
+      },
+      {
+        "fromIndex": 4,
+        "toIndex": 1,
+        "type": "Meter"
+      },
+      {
+        "fromIndex": 4,
+        "toIndex": 5,
+        "type": "EmbGTWmsg"
+      }
+    ],
+    "ruleChainConnections": null
+  }
+}

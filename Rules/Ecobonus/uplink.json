@@ -1,0 +1,285 @@
+{
+  "ruleChain": {
+    "additionalInfo": {
+      "description": ""
+    },
+    "name": "Uplink",
+    "type": "CORE",
+    "firstRuleNodeId": null,
+    "root": false,
+    "debugMode": false,
+    "configuration": null,
+    "externalId": null
+  },
+  "metadata": {
+    "firstNodeIndex": 6,
+    "nodes": [
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 843,
+          "layoutY": 147
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetOriginatorFieldsNode",
+        "name": "getDestOrig Debug",
+        "debugMode": true,
+        "singletonMode": false,
+        "configuration": {
+          "fieldsMapping": {
+            "name": "originatorName",
+            "type": "originatorType"
+          }
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "Integration Device",
+          "layoutX": 1194,
+          "layoutY": 144
+        },
+        "type": "org.thingsboard.rule.engine.rpc.TbSendRPCRequestNode",
+        "name": "Uplink by RPC Call To",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "timeoutInSeconds": 60
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 595,
+          "layoutY": 154
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "RPC REQUEST TO DEVICE",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "jsScript": "//metadata.deviceName=\"SN-002\";\nmetadata.deviceType=\"new\";\nmetadata.oneway= \"true\";\nmsgType='RPC_CALL_FROM_SERVER_TO_DEVICE';\n//msgType='ATTRIBUTES_UPDATED';\n//msg.params=\"fromtodevice\"+msg.params;\nvar Newmsg={};\nvar Newparams={};\nNewparams.device=metadata.deviceName;\nNewparams.customer=metadata.customer_title;\nNewparams.data=JSON.stringify(msg).replace(/[\"{}]|\\\\r\\\\n/g, '');\nNewparams.ruleType= metadata.shared_install_type+\" \"+metadata.shared_n_phase+\"P\";   \n\n/*\n//Newmsg.params=JSON.stringify(msg).replace(/[{}]/g, '');\nvar obj = msg;// JSON.parse(msg);\nvar keys = Object.keys(obj);\nfor (var i = 0; i < keys.length; i++) {\n // console.log(obj[keys[i]]);\nNewmsg.params=Newmsg.params+','+obj[keys[i]];\n//Newmsg.params=obj[keys[i]];\n\n    \n}*/\n//Newmsg.params=JSON.stringify(msg).replace(/[\"]/g, '');\n//Newmsg.params= \"\\\"\"+JSON.stringify(msg).replace(/[\"]/g, '') +\"device:\"+ metadata.deviceName+\"\\\"\";\nNewmsg.params=Newparams;\nNewmsg.method=\"setValue\";\n//Newmsg.device=metadata.deviceName;\n//metadata.requestId= \"61\";\n//metadata.sessionId = \"8c495ec5-d114-49ca-a1e9-6083c3c8c5ab\";\nreturn {msg: Newmsg, metadata: metadata, msgType: msgType};"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 292,
+          "layoutY": 64
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbChangeOriginatorNode",
+        "name": "To GTW by Uplink relation",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "originatorSource": "RELATED",
+          "relationsQuery": {
+            "fetchLastLevelOnly": false,
+            "direction": "TO",
+            "maxLevel": 1,
+            "filters": [
+              {
+                "relationType": "Uplink",
+                "entityTypes": [
+                  "DEVICE"
+                ]
+              }
+            ]
+          }
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "Se DA Mi crea una relazione DA: INT_API_GTW_TEST a API_GTW_TEST e A: API_GTW_TEST a INT_API_GTW_TEST e fa anche il cambio originator in automatico e quindi preferito a change originator che in questo esempio lavora con A: verso INT_API_GTW_TEST ",
+          "layoutX": 311,
+          "layoutY": 149
+        },
+        "type": "org.thingsboard.rule.engine.action.TbCreateRelationNode",
+        "name": "Uplink",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "direction": "FROM",
+          "entityType": "DEVICE",
+          "entityNamePattern": "API_GTW",
+          "entityTypePattern": "new",
+          "relationType": "Uplink",
+          "createEntityIfNotExists": true,
+          "removeCurrentRelations": false,
+          "changeOriginatorToRelatedEntity": true,
+          "entityCacheExpiration": 300
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 702,
+          "layoutY": 300
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgTimeseriesNode",
+        "name": "save API_GTW",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "defaultTTL": 0,
+          "skipLatestPersistence": false,
+          "useServerTs": false
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 154,
+          "layoutY": 287
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetCustomerDetailsNode",
+        "name": "get client info",
+        "debugMode": true,
+        "singletonMode": false,
+        "configuration": {
+          "detailsList": [
+            "TITLE"
+          ],
+          "addToMetadata": true
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 78,
+          "layoutY": 676
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "to gateway on colora",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "jsScript": "var newMsg={};\n\n\nreturn {msg: newMsg, metadata: metadata, msgType: msgType};\n\n//return {msg: msg, metadata: metadata, msgType: msgType};"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 701,
+          "layoutY": 387
+        },
+        "type": "org.thingsboard.rule.engine.mqtt.TbMqttNode",
+        "name": "redirect AH",
+        "debugMode": true,
+        "singletonMode": true,
+        "configuration": {
+          "topicPattern": "E-GTW/${originatorName}/data",
+          "host": "35.205.187.28",
+          "port": 1883,
+          "connectTimeoutSec": 10,
+          "clientId": null,
+          "cleanSession": true,
+          "ssl": false,
+          "credentials": {
+            "type": "basic",
+            "username": "vxwpwdlf",
+            "password": "LZP2V0omf4ef9PGMfflyb4fUddCZiVOy"
+          }
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 416,
+          "layoutY": 383
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetOriginatorFieldsNode",
+        "name": "getDestOrig Debug",
+        "debugMode": true,
+        "singletonMode": false,
+        "configuration": {
+          "fieldsMapping": {
+            "name": "originatorName",
+            "type": "originatorType"
+          }
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 380,
+          "layoutY": 692
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbJsSwitchNode",
+        "name": "switc by name",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "jsScript": "\nfunction nextRelation(metadata, msg) {\n//var prjauto = new RegExp(\"4C75256BF7E8\");\nvar prjauto = new RegExp(\"4091510BA1F4\");\nvar solarlog = new RegExp(\"Solarlog\");\n\n    if((prjauto.test(metadata.deviceName)) || (solarlog.test(metadata.deviceName)))\n    return ['PrjAuto'];\n\n}\nreturn nextRelation(metadata, msg);"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 153,
+          "layoutY": 384
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbJsFilterNode",
+        "name": "test",
+        "debugMode": true,
+        "singletonMode": false,
+        "configuration": {
+          "jsScript": "\nif (metadata.customer_title != 'Progetto Auto') return true;\nelse return false;\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};\n"
+        },
+        "externalId": null
+      }
+    ],
+    "connections": [
+      {
+        "fromIndex": 0,
+        "toIndex": 1,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 2,
+        "toIndex": 0,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 3,
+        "toIndex": 2,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 4,
+        "toIndex": 2,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 6,
+        "toIndex": 4,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 6,
+        "toIndex": 11,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 9,
+        "toIndex": 8,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 11,
+        "toIndex": 9,
+        "type": "True"
+      }
+    ],
+    "ruleChainConnections": null
+  }
+}

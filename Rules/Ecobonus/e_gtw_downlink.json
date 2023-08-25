@@ -1,0 +1,344 @@
+{
+  "ruleChain": {
+    "additionalInfo": {
+      "description": "Regola che trasforma una telemetria Ricevuta dal GTW che integra il downlink attraverso telemetria"
+    },
+    "name": "E-GTW_Downlink",
+    "type": "CORE",
+    "firstRuleNodeId": null,
+    "root": false,
+    "debugMode": false,
+    "configuration": null,
+    "externalId": null
+  },
+  "metadata": {
+    "firstNodeIndex": 2,
+    "nodes": [
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 748,
+          "layoutY": 51
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbCheckMessageNode",
+        "name": "check CMD Downilnk",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "messageNames": [
+            "cmd"
+          ],
+          "metadataNames": [],
+          "checkAllKeys": true
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1045,
+          "layoutY": 118
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "RPC REQUEST TO DEVICE",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "jsScript": "//metadata.deviceName=\"SN-002\";\n//metadata.deviceType=\"Thermometer\";\nvar NewMsg={};\nmetadata.oneway= \"true\";\nmsgType='RPC_CALL_FROM_SERVER_TO_DEVICE';\n//msgType='ATTRIBUTES_UPDATED';\nNewMsg.method='setValue';\n//var cmd1 = msg.cmd.toString();\nNewMsg.params=\"\\\"###AT+OUT1=?;\\\"\";\nNewMsg.params= \"\\\"\"+ msg.cmd.toString() +\"\\\"\";//Formato Richiesto \\\"###AT+OUT1=?;\\\" altrimenti da params null se presente #,=,? ecc, è stato fatto un confronto con il comando inviato dal widget e verificata la necessità di aggiungere le virgolette nella stringa\n//NewMsg.params=msg.cmd;\n//metadata.requestId= \"61\";\n//metadata.sessionId = \"8c495ec5-d114-49ca-a1e9-6083c3c8c5ab\";\nreturn {msg: NewMsg, metadata: metadata, msgType: msgType};"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 293,
+          "layoutY": 148
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbMsgTypeSwitchNode",
+        "name": "Tltry from Integration to E-GTW",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "version": 0
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1086,
+          "layoutY": 391
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "save client Attribute",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "scope": "CLIENT_SCOPE",
+          "notifyDevice": false
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1412,
+          "layoutY": 167
+        },
+        "type": "org.thingsboard.rule.engine.rpc.TbSendRPCRequestNode",
+        "name": "SendTo field device",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "timeoutInSeconds": 60
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 493,
+          "layoutY": 22
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgTimeseriesNode",
+        "name": "debug",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "defaultTTL": 0,
+          "skipLatestPersistence": false,
+          "useServerTs": false
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 859,
+          "layoutY": 179
+        },
+        "type": "org.thingsboard.rule.engine.rpc.TbSendRPCRequestNode",
+        "name": "test",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "timeoutInSeconds": 60
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1080,
+          "layoutY": 305
+        },
+        "type": "org.thingsboard.rule.engine.flow.TbRuleChainInputNode",
+        "name": "check ota update",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "ruleChainId": "aae2d160-60d7-11ed-a8d7-2f75b54da6f1"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1093,
+          "layoutY": 38
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "save last cmd",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "scope": "SERVER_SCOPE",
+          "notifyDevice": false
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 794,
+          "layoutY": 531
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Change to shared Attribute",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "jsScript": "var NewMsg={};\nNewMsg.Cliente=metadata.assignedCustomerName;\nmsgType='POST_ATTRIBUTES_REQUEST';\nreturn {msg: NewMsg, metadata: metadata, msgType: msgType};"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 465,
+          "layoutY": 527
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetCustomerDetailsNode",
+        "name": "get client info",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "detailsList": [
+            "TITLE"
+          ],
+          "addToMetadata": true
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1091,
+          "layoutY": 534
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "save server  Attribute",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "scope": "SERVER_SCOPE",
+          "notifyDevice": false
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1082,
+          "layoutY": 462
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "save server shared  Attribute",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "scope": "SHARED_SCOPE",
+          "notifyDevice": false
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 686,
+          "layoutY": 308
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbCheckMessageNode",
+        "name": "check shared Downilnk",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "messageNames": [
+            "shared"
+          ],
+          "metadataNames": [],
+          "checkAllKeys": true
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 672,
+          "layoutY": 425
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "remove shared key",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "jsScript": "//metadata.deviceName=\"SN-002\";\n//metadata.deviceType=\"Thermometer\";\nvar NewMsg={};\ndelete msg ['shared'];\nNewMsg=msg;\nreturn {msg: NewMsg, metadata: metadata, msgType: msgType};"
+        },
+        "externalId": null
+      }
+    ],
+    "connections": [
+      {
+        "fromIndex": 0,
+        "toIndex": 1,
+        "type": "True"
+      },
+      {
+        "fromIndex": 0,
+        "toIndex": 8,
+        "type": "True"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 4,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 2,
+        "toIndex": 0,
+        "type": "Post telemetry"
+      },
+      {
+        "fromIndex": 2,
+        "toIndex": 5,
+        "type": "Post telemetry"
+      },
+      {
+        "fromIndex": 2,
+        "toIndex": 6,
+        "type": "RPC Request to Device"
+      },
+      {
+        "fromIndex": 2,
+        "toIndex": 7,
+        "type": "Attributes Updated"
+      },
+      {
+        "fromIndex": 2,
+        "toIndex": 10,
+        "type": "Entity Assigned"
+      },
+      {
+        "fromIndex": 2,
+        "toIndex": 13,
+        "type": "Post attributes"
+      },
+      {
+        "fromIndex": 3,
+        "toIndex": 7,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 8,
+        "toIndex": 7,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 9,
+        "toIndex": 11,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 10,
+        "toIndex": 9,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 13,
+        "toIndex": 3,
+        "type": "False"
+      },
+      {
+        "fromIndex": 13,
+        "toIndex": 14,
+        "type": "True"
+      },
+      {
+        "fromIndex": 14,
+        "toIndex": 12,
+        "type": "Success"
+      }
+    ],
+    "ruleChainConnections": null
+  }
+}

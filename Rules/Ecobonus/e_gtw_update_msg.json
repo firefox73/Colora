@@ -1,0 +1,237 @@
+{
+  "ruleChain": {
+    "additionalInfo": {
+      "description": "Aggiorna telemetria/attributi o eventi device all'E-GTW"
+    },
+    "name": "E-GTW Update MSG",
+    "type": "CORE",
+    "firstRuleNodeId": null,
+    "root": false,
+    "debugMode": false,
+    "configuration": null,
+    "externalId": null
+  },
+  "metadata": {
+    "firstNodeIndex": 6,
+    "nodes": [
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 448,
+          "layoutY": 413
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "E-GTW Tltry/Sensor_Fusion",
+        "debugMode": true,
+        "singletonMode": false,
+        "configuration": {
+          "jsScript": "var newMsg={};\n//metadata.deviceName=metadata.originatorName;\nnewMsg.time=msg.time;\n\n//Da conoscere il numero e il tipo di dispositivi effettivamente collegati. Ad esempio se sono source e load si avrà:\n//segno atteso per PL positivo\n//segno atteso per PS negativo\nif (metadata.shared_install_type == 'load') {\n    if(metadata.shared_n_phase == '1') newMsg.PL=msg.P; \n    if(metadata.shared_n_phase == '3') newMsg.PL=msg.Ptot; \n    \n    newMsg.EtL=msg.TotEnA; //newMsg.EdL=msg.DayEnergy;\n    newMsg.EhL=msg.Ehour;\n    newMsg.EdL=msg.Eday;\n    // Ad esempio se sono presenti source e load si avrà:\n    // if(metadata.PS==null) metadata.PS=0;\n    //newMsg.PG = metadata.PS - newMsg.PL;\n    //newMsg.EdG = metadata.EdS - newMsg.EdL;\n} \nif (metadata.shared_install_type == 'source') {\n    if(metadata.shared_n_phase == '1') newMsg.PS=msg.P; \n    if(metadata.shared_n_phase == '3') newMsg.PS=msg.Ptot; \n//    newMsg.PS=msg.P; \n    newMsg.EtS=msg.TotEnA; \n    newMsg.EhS=msg.Ehour;\n    newMsg.EdS=msg.Eday;    \n    //newMsg.EdS=msg.DayEnergy;\n       // Ad esempio se sono presenti source e load si avrà:\n   // if((metadata.PL===\"0\")|| (metadata.PL===undefined)) metadata.PL=0;\n    //if((metadata.PG===\"0\")|| (metadata.PG===undefined)) metadata.PG=0;\n    //newMsg.PG = newMsg.PS- metadata.PL; \n    //newMsg.EdG = newMsg.EdS - metadata.EdL;\n}\nif (metadata.shared_install_type == 'grid') {\n    if(metadata.shared_n_phase == '1') newMsg.PG=msg.P; \n    if(metadata.shared_n_phase == '3') newMsg.PG=msg.Ptot;    \n    //newMsg.PG=msg.P; \n    newMsg.EtG=msg.TotEnA; //newMsg.EdG=msg.DayEnergy;\n    newMsg.EhG=msg.Ehour;\n    newMsg.EdG=msg.Eday;\n}\nif (metadata.deviceType == 'Heat_Meter') {\n    //newMsg.PG=msg.P; newMsg.EtG=msg.TotEnA; //newMsg.EdG=msg.DayEnergy;\n    newMsg.EtH=msg.Eht;\n    newMsg.rssi=msg.rssi;\n    newMsg.EhH=msg.Ehour;\n    newMsg.EdH=msg.Eday;\n}\n\n\n\n//msg.newMsg = newMsg;\nreturn {msg: newMsg, metadata: metadata, msgType: msgType};"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 626,
+          "layoutY": 264
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgTimeseriesNode",
+        "name": "save E-GTW telemetry",
+        "debugMode": true,
+        "singletonMode": false,
+        "configuration": {
+          "defaultTTL": 0,
+          "skipLatestPersistence": false,
+          "useServerTs": false
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 147,
+          "layoutY": 414
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetAttributesNode",
+        "name": "get telemetry",
+        "debugMode": true,
+        "singletonMode": false,
+        "configuration": {
+          "tellFailureIfAbsent": false,
+          "clientAttributeNames": [],
+          "sharedAttributeNames": [
+            "InitDate",
+            "InitDate_day"
+          ],
+          "serverAttributeNames": [],
+          "latestTsKeyNames": [
+            "PL",
+            "PS"
+          ],
+          "getLatestValueWithTs": false
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 943,
+          "layoutY": 192
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetOriginatorFieldsNode",
+        "name": "getDestOrig Debug",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "fieldsMapping": {
+            "name": "originatorName",
+            "type": "originatorType"
+          }
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 759,
+          "layoutY": 447
+        },
+        "type": "org.thingsboard.rule.engine.flow.TbRuleChainInputNode",
+        "name": "Uplink API_GTW",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "ruleChainId": "49deeff0-602f-11ed-93ec-df8357b13983"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 135,
+          "layoutY": 326
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbMsgTypeSwitchNode",
+        "name": "msg type",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "version": 0
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 119,
+          "layoutY": 242
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbChangeOriginatorNode",
+        "name": "to GTW change originator",
+        "debugMode": true,
+        "singletonMode": false,
+        "configuration": {
+          "originatorSource": "RELATED",
+          "relationsQuery": {
+            "fetchLastLevelOnly": false,
+            "direction": "TO",
+            "maxLevel": 1,
+            "filters": [
+              {
+                "relationType": "Created",
+                "entityTypes": [
+                  "DEVICE"
+                ]
+              }
+            ]
+          }
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "Popolo di dati gli E-GTW ",
+          "layoutX": 952,
+          "layoutY": 342
+        },
+        "type": "org.thingsboard.rule.engine.mqtt.TbMqttNode",
+        "name": "Send to iot API_GTW",
+        "debugMode": false,
+        "singletonMode": true,
+        "configuration": {
+          "topicPattern": "v1/gateway/telemetry",
+          "host": "iot.coing.it",
+          "port": 1883,
+          "connectTimeoutSec": 10,
+          "clientId": "Ecobonus deviot",
+          "cleanSession": true,
+          "ssl": false,
+          "credentials": {
+            "type": "basic",
+            "username": "hoiec6pWkcvaWbvhqIZW",
+            "password": "hoiec6pWkcvaWbvhqIZW"
+          }
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 945,
+          "layoutY": 261
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "E-GTW Tltry/Sensor_Fusion",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "jsScript": "var newMsg={};\n//var EGTW_NAME = \"30AEA404D220\" ; //metadata.deviceName\nvar EGTW_NAME = metadata.originatorName;\n newMsg[EGTW_NAME] = [msg]; \n//newMsg=\"{\\\"30AEA404D220\\\":[{\\\"prova\\\":\\\"1\\\"}]}\";\n//newMsg.AEA404D220=msg;\n//newMsg=\"{\\\"30AEA404D220\\\":[\"+JSON.stringify(msg)+\"]}\";\n//metadata.deviceName=metadata.originatorName;\n\n\n\n\n\n//msg.newMsg = newMsg;\nreturn {msg: newMsg, metadata: metadata, msgType: msgType};"
+        },
+        "externalId": null
+      }
+    ],
+    "connections": [
+      {
+        "fromIndex": 0,
+        "toIndex": 1,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 3,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 4,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 2,
+        "toIndex": 0,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 3,
+        "toIndex": 8,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 5,
+        "toIndex": 2,
+        "type": "Post telemetry"
+      },
+      {
+        "fromIndex": 6,
+        "toIndex": 5,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 8,
+        "toIndex": 7,
+        "type": "Success"
+      }
+    ],
+    "ruleChainConnections": null
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "ruleChain": {
+    "additionalInfo": {
+      "description": ""
+    },
+    "name": "SolarLog msg",
+    "type": "CORE",
+    "firstRuleNodeId": null,
+    "root": false,
+    "debugMode": false,
+    "configuration": null,
+    "externalId": null
+  },
+  "metadata": {
+    "firstNodeIndex": 4,
+    "nodes": [
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 700,
+          "layoutY": 148
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "to gateway on colora",
+        "debugMode": true,
+        "singletonMode": false,
+        "configuration": {
+          "scriptLang": "JS",
+          "jsScript": "var output_message={};\nvar gtw_message={};\n\nif(msgType == 'POST_TELEMETRY_REQUEST'){\n\n//output_message.TotEnA=msg.Energy_day;\n//output_message.Ptot=msg.Power;\n//calcolo offset timezone in ms\nvar offset = new Date(Number(metadata.ts)).getTimezoneOffset()*60000; \nvar m = new Date(Number(metadata.ts)-offset);\nvar dateString =\n    m.getUTCFullYear() + \"-\" +\n    (\"0\" + (m.getUTCMonth()+1)).slice(-2) + \"-\" +\n    (\"0\" + m.getUTCDate()).slice(-2) + \" \" +\n    (\"0\" + (m.getUTCHours())).slice(-2) + \":\" +\n    (\"0\" + m.getUTCMinutes()).slice(-2) + \":\" +\n    (\"0\" + m.getUTCSeconds()).slice(-2);\n\noutput_message.time=dateString; \n\nif (msg.hasOwnProperty('Energy_day')) output_message.TotEnA=msg.Energy_day;\nif (msg.hasOwnProperty('Power')) output_message.Ptot=msg.Power;\n\n\n\n}\nreturn {msg: output_message, metadata: metadata, msgType: msgType};\n\n//return {msg: msg, metadata: metadata, msgType: msgType};",
+          "tbelScript": null
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 418,
+          "layoutY": 149
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbMsgTypeSwitchNode",
+        "name": "switch",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "version": 0
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 991,
+          "layoutY": 146
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgTimeseriesNode",
+        "name": "save",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "defaultTTL": 0,
+          "skipLatestPersistence": false,
+          "useServerTs": false
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 992,
+          "layoutY": 251
+        },
+        "type": "org.thingsboard.rule.engine.flow.TbRuleChainInputNode",
+        "name": "save energy",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "ruleChainId": "6ddbf0a0-ddd0-11ed-86a7-399919bee214"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 239,
+          "layoutY": 69
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetAttributesNode",
+        "name": "get attribute",
+        "debugMode": true,
+        "singletonMode": false,
+        "configuration": {
+          "tellFailureIfAbsent": true,
+          "fetchToData": false,
+          "clientAttributeNames": [],
+          "sharedAttributeNames": [
+            "Label",
+            "identificativo",
+            "install_type"
+          ],
+          "serverAttributeNames": [],
+          "latestTsKeyNames": [],
+          "getLatestValueWithTs": false
+        },
+        "externalId": null
+      }
+    ],
+    "connections": [
+      {
+        "fromIndex": 0,
+        "toIndex": 2,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 0,
+        "toIndex": 3,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 0,
+        "type": "Post telemetry"
+      },
+      {
+        "fromIndex": 4,
+        "toIndex": 1,
+        "type": "Success"
+      }
+    ],
+    "ruleChainConnections": null
+  }
+}

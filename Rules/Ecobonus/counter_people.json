@@ -1,0 +1,83 @@
+{
+  "ruleChain": {
+    "additionalInfo": {
+      "description": "Parsing del counter people wifi-lora"
+    },
+    "name": "Counter People",
+    "type": "CORE",
+    "firstRuleNodeId": null,
+    "root": false,
+    "debugMode": false,
+    "configuration": null,
+    "externalId": null
+  },
+  "metadata": {
+    "firstNodeIndex": 0,
+    "nodes": [
+      {
+        "additionalInfo": {
+          "description": "checkGTWmsg_id ricerca MODB:, MSG1/2:, row (ossia ASCII-MODBUS)",
+          "layoutX": 365,
+          "layoutY": 152
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Transform_Counter People",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "jsScript": "\n//var log = new RegExp(\"Log\");\nvar tel = new RegExp(\"tel\");\n//var testlog = log.test(msg.MSG);\nvar testtel = tel.test(msg.MSG);\nif (testtel){//\"MSG\": \"telemetry=2020-11-21 00:00:00,58,0,58,58,58,0,0,3284,-57;\\n\"\n\n//msg.telemetry=1;\nvar nameArr = msg.MSG.split(',');\nmsg.timestamp=nameArr[0];//da togliere telemetry\nmsg.H_Count=nameArr[1];\nmsg.D_Count=nameArr[2];\nmsg.M_CountM=nameArr[3];\nmsg.Y_CountM=nameArr[4];\nmsg.T_Count=nameArr[5];\n//msg.Dummy1=nameArr[6];//Dummy1\n//msg.Dummy2=nameArr[7];//Dummy2\nmsg.Batt=nameArr[8];\n//nameArr=msg.MSG.split(';');\nmsg.Rssi=nameArr[9] ;//-';';//da togliere ;\n}\n\n//if (testlog){\n// Newmsg.Log=MSG;//fare eventuale parsing del log    \n//msg.log=1;\n//}\n\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};\n\n   \n"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "update timeseries",
+          "layoutX": 786,
+          "layoutY": 153
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgTimeseriesNode",
+        "name": "Counter Update",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "defaultTTL": 0
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 790,
+          "layoutY": 251,
+          "ruleChainNodeId": "rule-chain-node-4"
+        },
+        "type": "org.thingsboard.rule.engine.flow.TbRuleChainInputNode",
+        "name": "Progetto_Auto",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "ruleChainId": "9a861b00-251e-11ed-80c9-f327fd3e6ae1"
+        },
+        "externalId": null
+      }
+    ],
+    "connections": [
+      {
+        "fromIndex": 0,
+        "toIndex": 1,
+        "type": "Failure"
+      },
+      {
+        "fromIndex": 0,
+        "toIndex": 1,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 0,
+        "toIndex": 2,
+        "type": "Success"
+      }
+    ],
+    "ruleChainConnections": null
+  }
+}

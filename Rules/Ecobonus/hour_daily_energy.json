@@ -1,0 +1,339 @@
+{
+  "ruleChain": {
+    "additionalInfo": {
+      "description": "Calcolo e salvataggio dell'energia giornaliera e oraria"
+    },
+    "name": "Hour&Daily_Energy",
+    "type": "CORE",
+    "firstRuleNodeId": null,
+    "root": false,
+    "debugMode": false,
+    "configuration": null,
+    "externalId": null
+  },
+  "metadata": {
+    "firstNodeIndex": 11,
+    "nodes": [
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1437,
+          "layoutY": 93
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgTimeseriesNode",
+        "name": "save daily energy",
+        "debugMode": true,
+        "singletonMode": false,
+        "configuration": {
+          "defaultTTL": 0
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1147,
+          "layoutY": 36
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "energy daily",
+        "debugMode": true,
+        "singletonMode": false,
+        "configuration": {
+          "jsScript": "var newMSG={};\nnewMSG.time=msg.time;\nnewMSG.Eday=Number((msg.En_day).toFixed(2));\n//var install_type=metadata.shared_install_type;\n//if (install_type === \"load\")newMSG.Edh=Number(msg.En_day);\n//if (install_type === \"grid\") newMSG.Edg=Number(msg.En_day);\n//if (install_type === \"load\") newMSG.Edl=Number(msg.En_day);\n//if (install_type === \"source\") newMSG.Eds=Number(msg.En_day);\n\n\nmsgType='POST_TELEMETRY_REQUEST';\nreturn {msg: newMSG, metadata: metadata, msgType: msgType};"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "Aggiornamento della data prossimo invio del log in server attributi dell'asset",
+          "layoutX": 826,
+          "layoutY": 261
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Attr Update Energia Oraraia",
+        "debugMode": true,
+        "singletonMode": false,
+        "configuration": {
+          "jsScript": "var newType = \"POST_ATTRIBUTES_REQUEST\";\nvar time=msg.time;\nvar TotEnA = msg.TotEnA;\nvar Prev_En = metadata.shared_Init_EnA;\nvar En_hour = TotEnA - Number(Prev_En);\n\nvar newmsg = {\"time\": time, \"En_hour\": Number(En_hour.toFixed(2)), \"Init_EnA\": TotEnA}; \nreturn {\n    msg: newmsg,\n    metadata: metadata,\n    msgType:newType// msgType\n};\n\n\n"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 1160,
+          "layoutY": 158
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Save NextDate Hour Energy and Daily Energy",
+        "debugMode": true,
+        "singletonMode": false,
+        "configuration": {
+          "scope": "SHARED_SCOPE",
+          "notifyDevice": null
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 560,
+          "layoutY": 211
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbJsFilterNode",
+        "name": "Verifica se trascorsa 1 ora",
+        "debugMode": true,
+        "singletonMode": false,
+        "configuration": {
+          "jsScript": "//var d = Date.parse(\"2021-08-12 14:14:27\");\nvar d = Date.parse(metadata.shared_InitDate);\nvar hour_ms = 3600*1000;\nvar output_msg=msg;\n\nvar n=JSON.stringify(output_msg).search(\"TotEnA\"); \n//var n=JSON.stringify(output_msg).search(\"Eht\"); \n//var m=JSON.stringify(output_msg).search(\"EtG\"); \n//var p=JSON.stringify(output_msg).search(\"EtL\"); \n//var g=JSON.stringify(output_msg).search(\"EtS\"); \n\n\n//if (((metadata.ts>d)) && (n>0)){\nif (((metadata.ts-d)>=hour_ms) && (n>0)){return true;}\n//if (((metadata.ts-d)>=hour_ms) && ((n>0)||(m>0)||(p>0)||(g>0))){return true;}\nelse return false\n\n\n\n\n"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "Aggiornamento della data per il prossima salvataggio di energia",
+          "layoutX": 825,
+          "layoutY": 183
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Update Next InitDate Hour",
+        "debugMode": true,
+        "singletonMode": false,
+        "configuration": {
+          "jsScript": "var newType = \"POST_ATTRIBUTES_REQUEST\";\n\nvar InitDate = new Date(metadata.shared_InitDate);\n//var FreqLog = 24;//metadata.ss_FreqLog;\nvar FreqLog = 1;//metadata.ss_FreqLog;\nvar n = InitDate.valueOf();\nn=n+1000*FreqLog*3600;\n//n=n+1000*FreqLog*1800;\n//metadata.ss_NextLog=\"2021-08-12 14:14:27\";\nvar m = new Date(n).toLocaleString();\nvar newmsg = {\"InitDate\": m}; \nreturn {\n    msg: newmsg,\n    metadata: metadata,\n    msgType:newType// msgType\n};\n\n"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "Aggiornamento della data per il prossima salvataggio di energia",
+          "layoutX": 822,
+          "layoutY": 109
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Update Next InitDate Day",
+        "debugMode": true,
+        "singletonMode": false,
+        "configuration": {
+          "jsScript": "var newType = \"POST_ATTRIBUTES_REQUEST\";\n\nvar InitDate = new Date(metadata.shared_InitDate_day);\nvar FreqLog = 24;//metadata.ss_FreqLog;\n//var FreqLog = 1;//metadata.ss_FreqLog;\nvar n = InitDate.valueOf();\nn=n+1000*FreqLog*3600;\n//n=n+1000*FreqLog*1800;\n//metadata.ss_NextLog=\"2021-08-12 14:14:27\";\nvar m = new Date(n).toLocaleString();\nvar newmsg = {\"InitDate_day\": m}; \nreturn {\n    msg: newmsg,\n    metadata: metadata,\n    msgType:newType// msgType\n};\n\n"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 558,
+          "layoutY": 71
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbJsFilterNode",
+        "name": "Verifica se trascorse 24h",
+        "debugMode": true,
+        "singletonMode": false,
+        "configuration": {
+          "jsScript": "//var d = Date.parse(\"2021-08-12 14:14:27\");\nvar d = Date.parse(metadata.shared_InitDate_day);\nvar day_ms = 24*3600*1000;\nvar output_msg=msg;\n\nvar n=JSON.stringify(output_msg).search(\"TotEnA\");\n//var n=JSON.stringify(output_msg).search(\"Eht\"); \n//var m=JSON.stringify(output_msg).search(\"EtG\"); \n//var p=JSON.stringify(output_msg).search(\"EtL\"); \n//var g=JSON.stringify(output_msg).search(\"EtS\"); \n\n//if (((metadata.ts>d)) && (n>0)){\nif (((metadata.ts-d)>=day_ms) && (n>0)){return true;}\n//if (((metadata.ts-d)>=day_ms) && ((n>0)||(m>0)||(p>0)||(g>0))){return true;}\nelse return false;"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1148,
+          "layoutY": 266
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "hour energy",
+        "debugMode": true,
+        "singletonMode": false,
+        "configuration": {
+          "jsScript": "var newMSG={};\n//var install_type=metadata.shared_install_type;\nnewMSG.time=msg.time;\nnewMSG.Ehour=Number((msg.En_hour).toFixed(2));\n//if (install_type === \"grid\") newMSG.Ehg=Number(msg.En_hour);\n//if (install_type === \"load\") newMSG.Ehl=Number(msg.En_hour);\n//if (install_type === \"source\") newMSG.Ehs=Number(msg.En_hour);\n\nmsgType='POST_TELEMETRY_REQUEST';\nreturn {msg: newMSG, metadata: metadata, msgType: msgType};"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "Aggiornamento della data prossimo invio del log in server attributi dell'asset",
+          "layoutX": 827,
+          "layoutY": 29
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Attr Update Energia Giornaliera",
+        "debugMode": true,
+        "singletonMode": false,
+        "configuration": {
+          "jsScript": "var newType = \"POST_ATTRIBUTES_REQUEST\";\nvar time=msg.time;\nvar TotEnA = msg.TotEnA;\nvar Prev_En = metadata.shared_Init_EnA_day;\nvar En_day = TotEnA - Number(Prev_En);\n\nvar newmsg = {\"time\": time, \"En_day\": Number(En_day.toFixed(2)), \"Init_EnA_day\": TotEnA}; \nreturn {\n    msg: newmsg,\n    metadata: metadata,\n    msgType:newType// msgType\n};"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 131,
+          "layoutY": 407
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbJsSwitchNode",
+        "name": "switc by name",
+        "debugMode": true,
+        "singletonMode": false,
+        "configuration": {
+          "jsScript": "\nfunction nextRelation(metadata, msg) {\n//var prjauto = new RegExp(\"4C75256BF7E8\");\n\nvar load = new RegExp(\"load\");\nvar grid = new RegExp(\"grid\");\nvar source = new RegExp(\"source\");\nvar HM = new RegExp(\"Heat_Meter\");\n\n\nif(load.test(metadata.shared_install_type)) return ['load'];\nif(grid.test(metadata.shared_install_type)) return ['grid'];\nif(source.test(metadata.shared_install_type)) return ['source'];\nif(HM.test(metadata.deviceType)) return ['HM'];\n\n}\nreturn nextRelation(metadata, msg);"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 300,
+          "layoutY": 138
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetAttributesNode",
+        "name": "get attribute",
+        "debugMode": true,
+        "singletonMode": false,
+        "configuration": {
+          "tellFailureIfAbsent": true,
+          "clientAttributeNames": [],
+          "sharedAttributeNames": [
+            "InitDate",
+            "InitDate_day",
+            "Init_EnA",
+            "Init_EnA_day"
+          ],
+          "serverAttributeNames": [],
+          "latestTsKeyNames": [],
+          "getLatestValueWithTs": false
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1430,
+          "layoutY": 250
+        },
+        "type": "org.thingsboard.rule.engine.flow.TbRuleChainInputNode",
+        "name": "test",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "ruleChainId": "80a2b890-6102-11ed-a8d7-2f75b54da6f1"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1631,
+          "layoutY": 172,
+          "ruleChainNodeId": "rule-chain-node-9"
+        },
+        "type": "org.thingsboard.rule.engine.flow.TbRuleChainInputNode",
+        "name": "Progetto_Auto",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "ruleChainId": "9a861b00-251e-11ed-80c9-f327fd3e6ae1"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1729,
+          "layoutY": 94
+        },
+        "type": "org.thingsboard.rule.engine.flow.TbRuleChainOutputNode",
+        "name": "toProgetto",
+        "debugMode": true,
+        "singletonMode": false,
+        "configuration": {
+          "version": 0
+        },
+        "externalId": null
+      }
+    ],
+    "connections": [
+      {
+        "fromIndex": 0,
+        "toIndex": 12,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 0,
+        "toIndex": 14,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 0,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 2,
+        "toIndex": 3,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 2,
+        "toIndex": 8,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 4,
+        "toIndex": 2,
+        "type": "True"
+      },
+      {
+        "fromIndex": 4,
+        "toIndex": 5,
+        "type": "True"
+      },
+      {
+        "fromIndex": 5,
+        "toIndex": 3,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 6,
+        "toIndex": 3,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 7,
+        "toIndex": 6,
+        "type": "True"
+      },
+      {
+        "fromIndex": 7,
+        "toIndex": 9,
+        "type": "True"
+      },
+      {
+        "fromIndex": 8,
+        "toIndex": 0,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 9,
+        "toIndex": 1,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 9,
+        "toIndex": 3,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 11,
+        "toIndex": 4,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 11,
+        "toIndex": 7,
+        "type": "Success"
+      }
+    ],
+    "ruleChainConnections": null
+  }
+}

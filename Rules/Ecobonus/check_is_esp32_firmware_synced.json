@@ -1,0 +1,83 @@
+{
+  "ruleChain": {
+    "additionalInfo": {
+      "description": "Check is ESP32 firmware synced"
+    },
+    "name": "Check is ESP32 firmware synced",
+    "type": "CORE",
+    "firstRuleNodeId": null,
+    "root": false,
+    "debugMode": false,
+    "configuration": null,
+    "externalId": null
+  },
+  "metadata": {
+    "firstNodeIndex": 1,
+    "nodes": [
+      {
+        "additionalInfo": {
+          "layoutX": 273,
+          "layoutY": 423
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Save 'fwStateIsSynced' attribute",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "scope": "SERVER_SCOPE"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 125,
+          "layoutY": 225
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetAttributesNode",
+        "name": "Add attributes to metadata",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "clientAttributeNames": [
+            "currentFwVer"
+          ],
+          "sharedAttributeNames": [],
+          "serverAttributeNames": [
+            "lastTargetFwVer"
+          ],
+          "latestTsKeyNames": []
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 200,
+          "layoutY": 325
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Update server attribute 'fwStateIsSynced'",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "jsScript": "msg.fwStateIsSynced = false;\n\nif (metadata.cs_currentFwVer) {\n    msg.fwStateIsSynced = metadata.cs_currentFwVer === metadata.ss_lastTargetFwVer;\n}\n\nreturn {msg: msg, metadata: metadata, msgType: 'POST_ATTRIBUTES_REQUEST'};"
+        },
+        "externalId": null
+      }
+    ],
+    "connections": [
+      {
+        "fromIndex": 1,
+        "toIndex": 2,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 2,
+        "toIndex": 0,
+        "type": "Success"
+      }
+    ],
+    "ruleChainConnections": null
+  }
+}

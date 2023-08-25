@@ -1,0 +1,493 @@
+{
+  "ruleChain": {
+    "additionalInfo": {
+      "description": "redirect to colora.coing.it dei device PrjAuto"
+    },
+    "name": "Progetto_Auto",
+    "type": "CORE",
+    "firstRuleNodeId": null,
+    "root": false,
+    "debugMode": false,
+    "configuration": null,
+    "externalId": null
+  },
+  "metadata": {
+    "firstNodeIndex": 0,
+    "nodes": [
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 270,
+          "layoutY": 163
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetAttributesNode",
+        "name": "get Label",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "tellFailureIfAbsent": true,
+          "clientAttributeNames": [],
+          "sharedAttributeNames": [
+            "Label",
+            "identificativo"
+          ],
+          "serverAttributeNames": [],
+          "latestTsKeyNames": [],
+          "getLatestValueWithTs": false
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 567,
+          "layoutY": 47
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "to gateway on colora",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "jsScript": "var output_message={};\nvar gtw_message={};\n\nif(msgType == 'POST_TELEMETRY_REQUEST'){\n//gtw_message.DeviceName=metadata.deviceName;\nif (msg.hasOwnProperty('TotEnA')) output_message.TotEnA=msg.TotEnA;\n//if (msg.hasOwnProperty('TotEnR')) output_message.TotEnR=msg.TotEnR;\nif (msg.hasOwnProperty('P1')) output_message.P1=msg.P1;\nif (msg.hasOwnProperty('P2')) output_message.P2=msg.P2;\nif (msg.hasOwnProperty('P3')) output_message.P3=msg.P3;\nif (msg.hasOwnProperty('Ptot')) output_message.Ptot=msg.Ptot;\nif (msg.hasOwnProperty('PF1')) output_message.PF1=msg.PF1;\nif (msg.hasOwnProperty('PF2')) output_message.PF2=msg.PF2;\nif (msg.hasOwnProperty('PF3')) output_message.PF3=msg.PF3;\nif (msg.hasOwnProperty('DayEnergy')) output_message.DayEnergy=msg.DayEnergy;\nif (msg.hasOwnProperty('Psys')) output_message.Psys=msg.Psys;\n\nif (msg.hasOwnProperty('H_Count')) output_message.H_Count=msg.H_Count;\nif (msg.hasOwnProperty('D_Count')) output_message.D_Count=msg.D_Count;\nif (msg.hasOwnProperty('M_CountM')) output_message.M_CountM=msg.M_CountM;\nif (msg.hasOwnProperty('Y_CountM')) output_message.Y_CountM=msg.Y_CountM;\nif (msg.hasOwnProperty('Batt')) output_message.Batt=msg.Batt;\nif (msg.hasOwnProperty('Rssi')) output_message.Rssi=msg.Rssi;\n\nif (msg.hasOwnProperty('Energy_day')) output_message.EnergyDayPV=msg.Energy_day;\nif (msg.hasOwnProperty('Power')) output_message.PowerPV=msg.Power;\n\n\n//var newMsg = {};\nvar Name = metadata.shared_Label;\noutput_message.Name=Name;\n\n\nvar key=metadata.deviceName;\n\n\n\n//var gtw_message =\"{\"+metadata.deviceName+\":[\"+JSON.stringify(output_message)+\"]}\";\n//output_message=JSON.stringify(gtw_message);\n//gtw_message.test_0001=[output_message]; \ngtw_message[key] = [output_message];\n\n}\nreturn {msg: gtw_message, metadata: metadata, msgType: msgType};\n\n//return {msg: msg, metadata: metadata, msgType: msgType};"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 101,
+          "layoutY": 336
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbJsSwitchNode",
+        "name": "switc by name",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "jsScript": "\nfunction nextRelation(metadata, msg) {\n//var prjauto = new RegExp(\"4C75256BF7E8\");\nvar prjauto = new RegExp(\"4091510BA1F4\");\nvar solarlog = new RegExp(\"Solarlog\");\n\n    if((prjauto.test(metadata.deviceName)) || (solarlog.test(metadata.deviceName)))\n    return ['PrjAuto'];\n\n}\nreturn nextRelation(metadata, msg);"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1119,
+          "layoutY": 53
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgTimeseriesNode",
+        "name": "copy local telemetry",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "defaultTTL": 0
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1446,
+          "layoutY": 126,
+          "ruleChainNodeId": "rule-chain-node-9"
+        },
+        "type": "org.thingsboard.rule.engine.flow.TbRuleChainInputNode",
+        "name": "toAsset",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "ruleChainId": "a5684160-c588-11ec-b97f-b193f1aa0a96"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 828,
+          "layoutY": 49
+        },
+        "type": "org.thingsboard.rule.engine.mqtt.TbMqttNode",
+        "name": "redirect to Colora",
+        "debugMode": false,
+        "singletonMode": true,
+        "configuration": {
+          "topicPattern": "v1/gateway/telemetry",
+          "host": "colora.coing.it",
+          "port": 1883,
+          "connectTimeoutSec": 10,
+          "clientId": "Prjauto",
+          "appendClientIdSuffix": null,
+          "cleanSession": true,
+          "ssl": false,
+          "credentials": {
+            "type": "basic",
+            "username": "NERVAsmjSFJAEHErlmE5",
+            "password": "NERVAsmjSFJAEHErlmE5"
+          }
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1100,
+          "layoutY": 503
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "msg to AH",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "jsScript": "var newMsg={};\n//metadata.deviceName=metadata.originatorName;\nnewMsg.time=msg.time;\n\n//var EtL1=Number(metadata.EtL_Condizionatori);\n//var EtL2=Number(metadata.EtL_Luci_Esterne);\n//var EtL3=Number(metadata.EtL_PdC);\n//newMsg.EtL=EtL1+EtL2+EtL3;\n\nnewMsg.EtL=Number((Number(metadata.EtL_UTA_tetto)+Number(metadata.EtL_Condizionatori)+Number(metadata.EtL_Luci_Esterne)+Number(metadata.EtL_PdC)).toFixed(2));\nnewMsg.PL=Number((Number(metadata.PL_UTA_tetto)+Number(metadata.PL_Condizionatori)+Number(metadata.PL_Luci_Esterne)+Number(metadata.PL_PdC)).toFixed(2));\nnewMsg.EtG=Number((metadata.EtG_Generale));\nnewMsg.PG=Number((metadata.PG_Generale));\nif((msg.EdL_UTA_tetto!=undefined) || (msg.EdL_PdC!=undefined) || (msg.EdL_Luci_Esterne!=undefined) || (msg.EdL_Condizionatori!=undefined) ) \n{newMsg.EdL=Number((Number(metadata.EdL_UTA_tetto)+Number(metadata.EdL_Condizionatori)+Number(metadata.EdL_Luci_Esterne)+Number(metadata.EdL_PdC)).toFixed(2));}\nif((msg.EdG_Generale!=undefined)) newMsg.EdG=metadata.EdG_Generale;\n\n\nreturn {msg: newMsg, metadata: metadata, msgType: msgType};"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1103,
+          "layoutY": 581
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbJsFilterNode",
+        "name": "TEST",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "jsScript": "if (((metadata.deviceName==\"4091510BA1F4_002A\") && (msg.EtL_UTA_tetto!=undefined))||(msg.EdL_UTA_tetto!=undefined)||(msg.EdL_PdC!=undefined)||(msg.EdL_Condizionatori!=undefined)||(msg.EdL_Luci_Esterne!=undefined)||(msg.EdG_Generale!=undefined))\n{// aspetto che arrivi l'ultimo nodo\n    return true;\n}\nelse return false;"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 177,
+          "layoutY": 477
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "FUSION",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "scriptLang": "JS",
+          "jsScript": "\nvar newMsg = {};\nnewMsg.time=msg.time;\nvar gtwName = metadata.deviceName.substr(0,12);\n//         var Name =gtwName +\"[\"+metadata.shared_Label+\"].\";\nif (msg.EtL!= undefined)\n{\n//             var Name =\"EtL[\"+gtwName+\"-\" +metadata.shared_Label+\"]\";\n    var Name =\"EtL_\" +metadata.shared_identificativo;\n    //var EtL=msg.EtL;\n    newMsg[Name]=msg.EtL;\n}\nif (msg.EdL!= undefined)\n{\n//             var Name =\"EtL[\"+gtwName+\"-\" +metadata.shared_Label+\"]\";\n    var Name =\"EdL_\" +metadata.shared_identificativo;\n    //var EtL=msg.EtL;\n    newMsg[Name]=msg.EdL;\n}\n\nif (msg.PL!= undefined)\n{\n    var Name =\"PL_\" +metadata.shared_identificativo;\n//             var PL=msg.PL;\n//             newMsg[Name]=\"PL: \"+PL;\n    newMsg[Name]=msg.PL;\n}\n\n\nif (msg.EtG!= undefined)\n{\n//             var Name =\"EtG[\"+gtwName+\"-\" +metadata.shared_Label+\"]\";\n    var Name =\"EtG_\" +metadata.shared_identificativo;\n    //var EtL=msg.EtL;\n    newMsg[Name]=msg.EtG;\n}\nif (msg.EdG!= undefined)\n{\n//             var Name =\"EtG[\"+gtwName+\"-\" +metadata.shared_Label+\"]\";\n    var Name =\"EdG_\" +metadata.shared_identificativo;\n    //var EtL=msg.EtL;\n    newMsg[Name]=msg.EdG;\n}\n\nif (msg.PG!= undefined)\n{\n    var Name =\"PG_\" +metadata.shared_identificativo;\n//             var PG=msg.PG;\n//             newMsg[Name]=\"PG: \"+PG;\n    newMsg[Name]=msg.PG;\n}\n//if (msg.MSG != null){\nreturn {\n    //msg: msg,\n    msg: newMsg,\n    metadata: metadata,\n    msgType:msgType\n};\n//}",
+          "tbelScript": null
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1374,
+          "layoutY": 315
+        },
+        "type": "org.thingsboard.rule.engine.mqtt.TbMqttNode",
+        "name": "redirect AH",
+        "debugMode": false,
+        "singletonMode": true,
+        "configuration": {
+          "topicPattern": "E-GTW/${originatorName}/data",
+          "host": "35.205.187.28",
+          "port": 1883,
+          "connectTimeoutSec": 10,
+          "clientId": null,
+          "cleanSession": true,
+          "ssl": false,
+          "credentials": {
+            "type": "basic",
+            "username": "f7a5998ef216473eb5b1c473224913f4",
+            "password": "3965156625403a8c41ecc81e7516a1f695c4b7b9e377138092a474f3d7bfbe53"
+          }
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 819,
+          "layoutY": 481
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgTimeseriesNode",
+        "name": "save in GTW",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "defaultTTL": 0,
+          "skipLatestPersistence": false,
+          "useServerTs": false
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 524,
+          "layoutY": 381
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "EGTW-TELEMETRY",
+        "debugMode": true,
+        "singletonMode": false,
+        "configuration": {
+          "scriptLang": "JS",
+          "jsScript": "var newMsg={};\n//metadata.deviceName=metadata.originatorName;\nnewMsg.time=msg.time;\n\n//Da conoscere il numero e il tipo di dispositivi effettivamente collegati. Ad esempio se sono source e load si avrà:\n//segno atteso per PL positivo\n//segno atteso per PS negativo\nif (metadata.shared_install_type == 'load') {\n    if(metadata.shared_n_phase == '3') \n    \n    newMsg.PL=msg.Ptot; \n    newMsg.VArL=msg.VArtot;\n    newMsg.EtL=msg.TotEnA; //newMsg.EdL=msg.DayEnergy;\n    newMsg.EhL=msg.Ehour;\n    newMsg.EdL=msg.DayEnergy;\n\n} \nif (metadata.shared_install_type == 'grid') {\n    if(metadata.shared_n_phase == '3') \n    \n    newMsg.PG=msg.Ptot; \n    newMsg.VArG=msg.VArtot;\n    newMsg.EtG=msg.TotEnA; //newMsg.EdL=msg.DayEnergy;\n    newMsg.EhG=msg.Ehour;\n    newMsg.EdG=msg.DayEnergy;\n\n} \nif (metadata.shared_install_type == 'source') {\n    //if(metadata.shared_n_phase == '3') \n    \n    newMsg.PS=msg.Power; \n    newMsg.EtS=msg.Energy_day; //newMsg.EdL=msg.DayEnergy;\n    newMsg.EhS=msg.Ehour;\n    newMsg.EdS=msg.DayEnergy;\n\n} \n\n\n\n\n\n//msg.newMsg = newMsg;\nreturn {msg: newMsg, metadata: metadata, msgType: msgType};",
+          "tbelScript": null
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 511,
+          "layoutY": 482
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbChangeOriginatorNode",
+        "name": "to GTW change originator",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "originatorSource": "RELATED",
+          "relationsQuery": {
+            "fetchLastLevelOnly": false,
+            "direction": "TO",
+            "maxLevel": 1,
+            "filters": [
+              {
+                "relationType": "Created",
+                "entityTypes": [
+                  "DEVICE"
+                ]
+              }
+            ]
+          }
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1122,
+          "layoutY": 657
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetAttributesNode",
+        "name": "get Last telemetry",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "tellFailureIfAbsent": true,
+          "clientAttributeNames": [],
+          "sharedAttributeNames": [],
+          "serverAttributeNames": [],
+          "latestTsKeyNames": [
+            "EtL_Luci_Esterne",
+            "PL_Luci_Esterne",
+            "EtL_PdC",
+            "PL_PdC",
+            "EtL_Condizionatori",
+            "PL_Condizionatori",
+            "EtL_UTA_tetto",
+            "PL_UTA_tetto",
+            "EdL_PdC",
+            "EdL_Luci_Esterne",
+            "EdL_Condizionatori",
+            "EdL_UTA_tetto",
+            "EtG_Generale",
+            "PG_Generale",
+            "EdG_Generale"
+          ],
+          "getLatestValueWithTs": false
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1417,
+          "layoutY": 210
+        },
+        "type": "org.thingsboard.rule.engine.debug.TbMsgGeneratorNode",
+        "name": "test",
+        "debugMode": true,
+        "singletonMode": false,
+        "configuration": {
+          "msgCount": 1,
+          "periodInSeconds": 2,
+          "jsScript": "var msg ={\n    \"EdL_Generale\": 211.20\n};\n    var metadata= {\n    \"deviceName\": \"4091510BA1F4_001A\",\n    \"deviceType\": \"MeterABB\",\n    \"shared_Label\": \"Quadro Generale\",\n    \"shared_identificativo\": \"Generale\",\n    \"shared_install_type\": \"grid\",\n    \"shared_n_phase\": \"3\",\n    \"ts\": \"1686524782284\"\n};\n    var msgType= \"POST_TELEMETRY_REQUEST\";\n\nreturn { msg: msg, metadata: metadata, msgType: msgType };",
+          "originatorId": "16c47b80-6b29-11ed-bd92-8d2b55be6341",
+          "originatorType": "DEVICE"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "Permette di ricavarmi l'originatorName (che è quello del GTW) che voglio inserire nel topic della publish",
+          "layoutX": 1100,
+          "layoutY": 431
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetOriginatorFieldsNode",
+        "name": "get originatorName",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "fieldsMapping": {
+            "name": "originatorName",
+            "type": "originatorType"
+          }
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 475,
+          "layoutY": 683
+        },
+        "type": "org.thingsboard.rule.engine.mqtt.TbMqttNode",
+        "name": "redirect AH",
+        "debugMode": true,
+        "singletonMode": false,
+        "configuration": {
+          "topicPattern": "E-GTW/${originatorName}/data/${shared_identificativo}",
+          "host": "35.205.187.28",
+          "port": 1883,
+          "connectTimeoutSec": 10,
+          "clientId": null,
+          "cleanSession": true,
+          "retainedMessage": null,
+          "ssl": false,
+          "credentials": {
+            "type": "basic",
+            "username": "f7a5998ef216473eb5b1c473224913f4",
+            "password": "3965156625403a8c41ecc81e7516a1f695c4b7b9e377138092a474f3d7bfbe53"
+          }
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "Permette di ricavarmi l'originatorName (che è quello del GTW) che voglio inserire nel topic della publish",
+          "layoutX": 214,
+          "layoutY": 684
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetOriginatorFieldsNode",
+        "name": "get originatorName",
+        "debugMode": true,
+        "singletonMode": false,
+        "configuration": {
+          "fieldsMapping": {
+            "name": "originatorName",
+            "type": "originatorType"
+          }
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 572,
+          "layoutY": 160
+        },
+        "type": "org.thingsboard.rule.engine.flow.TbRuleChainInputNode",
+        "name": "save Energy",
+        "debugMode": true,
+        "singletonMode": false,
+        "configuration": {
+          "ruleChainId": "6ddbf0a0-ddd0-11ed-86a7-399919bee214"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 870,
+          "layoutY": 128
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "to gateway on colora",
+        "debugMode": true,
+        "singletonMode": false,
+        "configuration": {
+          "scriptLang": "JS",
+          "jsScript": "var output_message={};\nvar gtw_message={};\n\nif(msgType == 'POST_TELEMETRY_REQUEST'){\n\n//output_message.TotEnA=msg.Energy_day;\n//output_message.Ptot=msg.Power;\n//calcolo offset timezone in ms\nvar offset = new Date(Number(metadata.ts)).getTimezoneOffset()*60000; \nvar m = new Date(Number(metadata.ts)-offset);\nvar dateString =\n    m.getUTCFullYear() + \"-\" +\n    (\"0\" + (m.getUTCMonth()+1)).slice(-2) + \"-\" +\n    (\"0\" + m.getUTCDate()).slice(-2) + \" \" +\n    (\"0\" + (m.getUTCHours())).slice(-2) + \":\" +\n    (\"0\" + m.getUTCMinutes()).slice(-2) + \":\" +\n    (\"0\" + m.getUTCSeconds()).slice(-2);\n\noutput_message.time=dateString; \n\nif (msg.hasOwnProperty('Energy_day')) output_message.TotEnA=msg.Energy_day;\nif (msg.hasOwnProperty('Power')) output_message.Ptot=msg.Power;\n\n\n\n}\nreturn {msg: output_message, metadata: metadata, msgType: msgType};\n\n//return {msg: msg, metadata: metadata, msgType: msgType};",
+          "tbelScript": null
+        },
+        "externalId": null
+      }
+    ],
+    "connections": [
+      {
+        "fromIndex": 0,
+        "toIndex": 1,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 0,
+        "toIndex": 2,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 0,
+        "toIndex": 11,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 0,
+        "toIndex": 18,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 5,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 5,
+        "toIndex": 3,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 6,
+        "toIndex": 15,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 7,
+        "toIndex": 6,
+        "type": "True"
+      },
+      {
+        "fromIndex": 8,
+        "toIndex": 12,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 11,
+        "toIndex": 12,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 12,
+        "toIndex": 10,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 12,
+        "toIndex": 17,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 13,
+        "toIndex": 7,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 17,
+        "toIndex": 16,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 18,
+        "toIndex": 11,
+        "type": "toProgetto"
+      }
+    ],
+    "ruleChainConnections": null
+  }
+}

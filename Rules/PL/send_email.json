@@ -1,0 +1,392 @@
+{
+  "ruleChain": {
+    "additionalInfo": null,
+    "name": "Send_Email",
+    "type": "CORE",
+    "firstRuleNodeId": null,
+    "root": false,
+    "debugMode": false,
+    "configuration": null,
+    "externalId": null
+  },
+  "metadata": {
+    "firstNodeIndex": 4,
+    "nodes": [
+      {
+        "additionalInfo": {
+          "description": "Prova mail",
+          "layoutX": 779,
+          "layoutY": 63
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbMsgToEmailNode",
+        "name": "Email",
+        "debugMode": false,
+        "configuration": {
+          "fromTemplate": "info@coing.it",
+          "toTemplate": "info@coing.it",
+          "ccTemplate": "",
+          "bccTemplate": null,
+          "subjectTemplate": "Warning IOT ${deviceName} ${shared_Installazione}",
+          "mailBodyType": null,
+          "isHtmlTemplate": null,
+          "bodyTemplate": "Allarme sul dispositivo ${deviceName} ${shared_Installazione} con errore ${error_type};"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 314,
+          "layoutY": 166
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbJsFilterNode",
+        "name": "Verify error state",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var newMsg={};\nnewMsg = msg[0];\n\nif ((newMsg.values.error_state === '0')||(newMsg.values.error_state === undefined))return false;\nelse\n{ \n    //metadata.error_type=newMsg.values.error_type;\n    return true;\n}\n\n//if (msg.Deltaperc_T2C > metadata.shared_T2C_percent) return true;\n//else return false;\n\n\n//return msg.temperature > 20;"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 521,
+          "layoutY": 62
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "save last error_type",
+        "debugMode": false,
+        "configuration": {
+          "jsScript": "var newMsg={};\nnewMsg=msg[0];\nmetadata.error_type=newMsg.values.error_type;\nmetadata.time=newMsg.values.timestamp;\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 953,
+          "layoutY": 268
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbSendEmailNode",
+        "name": "Send to Tentant and info@coing.it",
+        "debugMode": true,
+        "configuration": {
+          "useSystemSmtpSettings": true,
+          "smtpHost": "localhost",
+          "smtpPort": 25,
+          "username": null,
+          "password": null,
+          "smtpProtocol": "smtp",
+          "timeout": 10000,
+          "enableTls": false,
+          "tlsVersion": "TLSv1.2",
+          "enableProxy": false,
+          "proxyHost": null,
+          "proxyPort": null,
+          "proxyUser": null,
+          "proxyPassword": null
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 194,
+          "layoutY": 292
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetAttributesNode",
+        "name": "Get Device Site",
+        "debugMode": true,
+        "configuration": {
+          "tellFailureIfAbsent": true,
+          "clientAttributeNames": [],
+          "sharedAttributeNames": [
+            "Installazione"
+          ],
+          "serverAttributeNames": [],
+          "latestTsKeyNames": [],
+          "getLatestValueWithTs": false
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 128,
+          "layoutY": 587
+        },
+        "type": "org.thingsboard.rule.engine.debug.TbMsgGeneratorNode",
+        "name": "test",
+        "debugMode": false,
+        "configuration": {
+          "msgCount": 1,
+          "periodInSeconds": 2,
+          "jsScript": "var msg = [{\n        \"ts\": 1684584385000,\n        \"values\": {\n            \"MSG\": \"telemetryPL=2023-05-20 12:06:25,2,49,100,3994, 2,99,-0.01,-0.93,0.00,370,0,-63\",\n            \"ct\": \"20230520T120630,000000\",\n            \"timestamp\": \"2023-05-20 12:06:25+0000\",\n            \"ts\": 1684584385000,\n            \"num_azionamenti_PL\": \"2\",\n            \"T2Oc\": 3.9,\n            \"T2Cc\": 4,\n            \"TCc\": 399.4,\n            \"PL_state\": \"02\",\n            \"SM_state\": \"0\",\n            \"SM\": \"SM_SB\",\n            \"error_state\": \"2\",\n            \"Batt\": \"99\",\n            \"x_acc\": \"-0.01\",\n            \"y_acc\": \"-0.93\",\n            \"z_acc\": \"0.00\",\n            \"sc_pci\": \"370\",\n            \"sc_ecl\": \"0\",\n            \"sc_rssi\": \"-63\",\n            \"operational_time\": 410.3,\n            \"error_type\": \"T2O/T2C OVER RANGE\",\n            \"angle\": 0,\n            \"T2CS_perc\": \"50\",\n            \"T2OS_perc\": \"50\",\n            \"Deltaperc_T2O\": -52.5,\n            \"Deltaperc_T2C\": 18.05\n        }\n    }, {\n        \"ts\": 1684584384000,\n        \"values\": {\n            \"MSG\": \"telemetryPL=2023-05-20 12:06:24,2,19,40,3994, 2,99,-0.01,-0.93,0.00,370,0,-63\",\n            \"ct\": \"20230520T120630,000000\",\n            \"timestamp\": \"2023-05-20 12:06:24+0000\",\n            \"ts\": 1684584384000,\n            \"num_azionamenti_PL\": \"2\",\n            \"T2Oc\": 1.9,\n            \"T2Cc\": 4,\n            \"TCc\": 399.4,\n            \"PL_state\": \"02\",\n            \"SM_state\": \"0\",\n            \"SM\": \"SM_SB\",\n            \"error_state\": \"2\",\n            \"Batt\": \"99\",\n            \"x_acc\": \"-0.01\",\n            \"y_acc\": \"-0.93\",\n            \"z_acc\": \"0.00\",\n            \"sc_pci\": \"370\",\n            \"sc_ecl\": \"0\",\n            \"sc_rssi\": \"-63\",\n            \"operational_time\": 410.3,\n            \"error_type\": \"T2O/T2C OVER RANGE\",\n            \"angle\": 0,\n            \"T2CS_perc\": \"50\",\n            \"T2OS_perc\": \"50\",\n            \"Deltaperc_T2O\": -52.5,\n            \"Deltaperc_T2C\": -48.05\n        }\n    }, {\n        \"ts\": 1684584383000,\n        \"values\": {\n            \"MSG\": \"LOGD:66,1684584383,2,19,40,3994, 2,36,40,19,40,59,40,0\",\n            \"ct\": \"20230520T120630,000000\",\n            \"ts\": 1684584383000,\n            \"timestamp_log\": \"2023-05-20 12:06:23\",\n            \"num_azionamenti_PL_log\": \"2\",\n            \"PL_T2O_time_log\": 1.9,\n            \"PL_T2C_time_log\": 4,\n            \"PL_TC_time_log\": 399.4,\n            \"PL_state_log\": \"02\",\n            \"PL_T2O_Average_log\": 3.6,\n            \"PL_T2C_Average_log\": 4,\n            \"PL_T2O_min_log\": 1.9,\n            \"PL_T2C_min_log\": 4,\n            \"PL_T2O_Max_log\": 5.9,\n            \"PL_T2C_Max_log\": 4,\n            \"num_PL_TotNoModel_log\": \"0\",\n            \"T2CS_perc_log\": \"50\",\n            \"T2OS_perc_log\": \"50\",\n            \"Deltaperc_T2O_avg_log\": -10,\n            \"Deltaperc_T2C_avg_log\": -48.05,\n            \"Deltaperc_T2O_min_log\": -52.5,\n            \"Deltaperc_T2C_min_log\": -48.05,\n            \"Deltaperc_T2O_Max_log\": 47.5,\n            \"Deltaperc_T2C_Max_log\": -48.05,\n            \"Deltaperc_T2O_Plot\": -52.5,\n            \"Deltaperc_T2C_Plot\": -48.05,\n            \"SM_state_log\": \"0\",\n            \"error_state_log\": \"2\",\n            \"SM_log\": \"SM_SB\",\n            \"error_type_log\": \"T2O/T2C OVER RANGE\",\n            \"angle_log\": 0\n        }\n    }];\nvar metadata = {deviceName :\"PL4_Bu\", Installazione:\"Seveso Km 20+927\"};\n//metadata.time=msg[0].values.timestamp;\nmetadata.shared_Installazione=\"Seveso Km 20+927\";\nmetadata.shared_T2C_reference=60;\nmetadata.shared_T2O_reference=40;\nvar msgType = \"POST_TELEMETRY_REQUEST\";\n\nreturn { msg: msg, metadata: metadata, msgType: msgType };",
+          "originatorId": "df0c6a30-f0d0-11ed-b625-a1f12596c0eb",
+          "originatorType": "DEVICE"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 984,
+          "layoutY": 693
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbSendEmailNode",
+        "name": "Send to Tentant and tecnico@coing.it",
+        "debugMode": true,
+        "configuration": {
+          "useSystemSmtpSettings": true,
+          "smtpHost": "localhost",
+          "smtpPort": 25,
+          "username": null,
+          "password": null,
+          "smtpProtocol": "smtp",
+          "timeout": 10000,
+          "enableTls": false,
+          "tlsVersion": "TLSv1.2",
+          "enableProxy": false,
+          "proxyHost": null,
+          "proxyPort": null,
+          "proxyUser": null,
+          "proxyPassword": null
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "Prova mail",
+          "layoutX": 627,
+          "layoutY": 795
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbMsgToEmailNode",
+        "name": "Email",
+        "debugMode": true,
+        "configuration": {
+          "fromTemplate": "info@coing.it",
+          "toTemplate": "tecnico@coing.it",
+          "ccTemplate": "",
+          "bccTemplate": null,
+          "subjectTemplate": "Warning IOT ${deviceName} ${shared_Installazione}",
+          "mailBodyType": null,
+          "isHtmlTemplate": null,
+          "bodyTemplate": "${deviceName} ${shared_Installazione}: ${time} - Movimento di ${Movimento} anomalo di ${tempo_movimento}s invece che ${Reference}s (${Deltaperc}%).\n\nQuesta mail è autogenerata. Non rispondere a questa mail."
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 416,
+          "layoutY": 694
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "save parameter for mail body",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var newMsg={};\nnewMsg=msg[0];\n//salvo time ed errore\nmetadata.error_type=newMsg.values.error_type;\n//metadata.time=newMsg.values.timestamp;\n\nvar d = new Date(newMsg.ts);\n//var d = newMsg.ts;\n\nvar timeOffsetInHours  =0;//((d.getTimezoneOffset()/60) * (-1));//+1; //aggiunto il +1 perchè il server ha come timezone offset 0 rispetto a utc\n          \n var datestring =  d.getFullYear() + \"-\" + (\"0\"+(d.getMonth()+1)).slice(-2) + \"-\" + (\"0\" + d.getDate()).slice(-2) + \" \" + (\"0\"+(d.getHours()+timeOffsetInHours)).slice(-2) + \":\" + (\"0\" + d.getMinutes()).slice(-2) + \":\" + (\"0\" + d.getSeconds()).slice(-2);//+ \";\";\nmetadata.time=datestring;\n//verifico quale ha superato la soglia impostata\nif((Math.abs(Number(newMsg.values.Deltaperc_T2C)) > Number(newMsg.values.T2CS_perc)) && (Math.abs(Number(newMsg.values.Deltaperc_T2O)) > Number(newMsg.values.T2OS_perc)))\n{\n    metadata.Movimento=\"Apertura e Chiusura\";\n    metadata.CloseTime = newMsg.values.T2Cc;\n    metadata.Close_Reference=metadata.shared_T2C_reference/10;\n    metadata.Close_Deltaperc=newMsg.values.Deltaperc_T2C;\n    metadata.OpenTime = newMsg.values.T2Oc;\n    metadata.Open_Reference=metadata.shared_T2O_reference/10;\n    metadata.Open_Deltaperc=newMsg.values.Deltaperc_T2O;\n    //metadata.Body=\"${deviceName} ${shared_Installazione}+\":\"+ ${time} - Movimento di ${Movimento} anomalo di ${tempo_movimento}s invece che ${Reference}s (${Deltaperc}%).\\n\\nQuesta mail è autogenerata. Non rispondere a questa mail.\";\n    \n    metadata.Body=metadata.deviceName+\" \"+metadata.shared_Installazione+\": \"+metadata.time+\" - Movimento di Apertura anomalo di \"+metadata.OpenTime+\"s invece che \"+metadata.Open_Reference+\"s (\"+metadata.Open_Deltaperc+\"%). Movimento di Chiusura anomalo di \"+metadata.CloseTime+\"s invece che \"+metadata.Close_Reference+\"s (\"+metadata.Close_Deltaperc+\"%).\" \n    \n}\nelse if(Math.abs(Number(newMsg.values.Deltaperc_T2O)) > Number(newMsg.values.T2OS_perc)) \n{\n    metadata.Movimento=\"Apertura\";\n    metadata.tempo_movimento = newMsg.values.T2Oc;\n    metadata.Reference=metadata.shared_T2O_reference/10;\n    metadata.Deltaperc=newMsg.values.Deltaperc_T2O;\n    metadata.Body=metadata.deviceName+ metadata.shared_Installazione+\":\" +metadata.time+\" - Movimento di \"+metadata.Movimento+\" anomalo di \"+metadata.tempo_movimento+\"s invece che \"+metadata.Reference+\"s (\"+metadata.Deltaperc+\"%).\" \n}\nelse if(Math.abs(Number(newMsg.values.Deltaperc_T2C)) > Number(newMsg.values.T2CS_perc))\n{\n    metadata.Movimento=\"Chiusura\";\n    metadata.tempo_movimento = newMsg.values.T2Cc;\n    metadata.Reference=metadata.shared_T2C_reference/10;\n    metadata.Deltaperc=newMsg.values.Deltaperc_T2C;\n    metadata.Body=metadata.deviceName+ metadata.shared_Installazione+\":\" +metadata.time+\" - Movimento di \"+metadata.Movimento+\" anomalo di \"+metadata.tempo_movimento+\"s invece che \"+metadata.Reference+\"s (\"+metadata.Deltaperc+\"%).\" \n}\n\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 126,
+          "layoutY": 694
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbJsFilterNode",
+        "name": "Verify error state",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var newMsg={};\nnewMsg = msg[0];\n\nif ((newMsg.values.error_state === '0')||(newMsg.values.error_state === undefined))return false;\nelse\n{ \n    //metadata.error_type=newMsg.values.error_type;\n    return true;\n}\n\n//if (msg.Deltaperc_T2C > metadata.shared_T2C_percent) return true;\n//else return false;\n\n\n//return msg.temperature > 20;"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 505,
+          "layoutY": 379
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "save parameter for mail body",
+        "debugMode": false,
+        "configuration": {
+          "jsScript": "var newMsg={};\nnewMsg=msg[0];\n//salvo time ed errore\nmetadata.error_type=newMsg.values.error_type;\nmetadata.time=newMsg.values.timestamp;\n\n//verifico quale ha superato la soglia impostata\nif(Math.abs(Number(newMsg.values.Deltaperc_T2O)) > Number(newMsg.values.T2OS_perc)) \n{\n    metadata.Movimento=\"Apertura\";\n    metadata.tempo_movimento = newMsg.values.T2Oc;\n    metadata.Reference=metadata.shared_T2O_reference/10;\n    metadata.Deltaperc=newMsg.values.Deltaperc_T2O;\n}\nelse if(Math.abs(Number(newMsg.values.Deltaperc_T2C)) > Number(newMsg.values.T2CS_perc))\n{\n    metadata.Movimento=\"Chiusura\";\n    metadata.tempo_movimento = newMsg.values.T2Cc;\n    metadata.Reference=metadata.shared_T2C_reference/10;\n    metadata.Deltaperc=newMsg.values.Deltaperc_T2C;\n}\nelse if((Math.abs(Number(newMsg.values.Deltaperc_T2C)) > Number(newMsg.values.T2CS_perc)) || (Math.abs(Number(newMsg.values.Deltaperc_T2O)) > Number(newMsg.values.T2OS_perc)))\n{\n    metadata.Movimento=\"Apertura e Chiusura\";\n}\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "Prova mail",
+          "layoutX": 724,
+          "layoutY": 194
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbMsgToEmailNode",
+        "name": "Email",
+        "debugMode": true,
+        "configuration": {
+          "fromTemplate": "noreply@coing.it",
+          "toTemplate": "noreply@coing.it",
+          "ccTemplate": "",
+          "bccTemplate": null,
+          "subjectTemplate": "Warning ${deviceName} ${shared_Installazione}",
+          "mailBodyType": null,
+          "isHtmlTemplate": null,
+          "bodyTemplate": "${Body}\n\nQuesta mail è autogenerata. Non rispondere a questa mail."
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 302,
+          "layoutY": 883
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbJsSwitchNode",
+        "name": "prova",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "function nextRelation(metadata, msg) {\n    //return ['one','nine'];\n}\n/*if(msgType === 'POST_TELEMETRY_REQUEST') {\n    return ['two'];\n}*/\n\nif (metadata.Movimento === 'Apertura') return ['Apertura'];\nelse if (metadata.Movimento === 'Chiusura') return ['Chiusura'];\nelse if ((metadata.Movimento === 'Apertura e Chiusura')) return ['Apertura/Chiusura'];\n\nreturn nextRelation(metadata, msg);\n\n"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "Prova mail",
+          "layoutX": 632,
+          "layoutY": 896
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbMsgToEmailNode",
+        "name": "Email",
+        "debugMode": true,
+        "configuration": {
+          "fromTemplate": "info@coing.it",
+          "toTemplate": "tecnico@coing.it",
+          "ccTemplate": "",
+          "bccTemplate": null,
+          "subjectTemplate": "Warning IOT ${deviceName} ${shared_Installazione}",
+          "mailBodyType": null,
+          "isHtmlTemplate": null,
+          "bodyTemplate": "${deviceName} ${shared_Installazione}: ${time} - Movimento di ${Movimento} anomalo di ${tempo_movimento}s invece che ${Reference}s (${Deltaperc}%).\n\nQuesta mail è autogenerata. Non rispondere a questa mail."
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "Prova mail",
+          "layoutX": 631,
+          "layoutY": 999
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbMsgToEmailNode",
+        "name": "Email",
+        "debugMode": true,
+        "configuration": {
+          "fromTemplate": "info@coing.it",
+          "toTemplate": "tecnico@coing.it",
+          "ccTemplate": "",
+          "bccTemplate": null,
+          "subjectTemplate": "Warning IOT ${deviceName} ${shared_Installazione}",
+          "mailBodyType": null,
+          "isHtmlTemplate": null,
+          "bodyTemplate": "${deviceName} ${shared_Installazione}: ${time} - Movimento di ${Movimento} anomalo di ${tempo_movimento}s invece che ${Reference}s (${Deltaperc}%).\n\nQuesta mail è autogenerata. Non rispondere a questa mail."
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "Prova mail",
+          "layoutX": 697,
+          "layoutY": 695
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbMsgToEmailNode",
+        "name": "Email",
+        "debugMode": true,
+        "configuration": {
+          "fromTemplate": "noreply@coing.it",
+          "toTemplate": "tecnico@coing.it, noreply@coing.it",
+          "ccTemplate": "",
+          "bccTemplate": null,
+          "subjectTemplate": "Warning IOT ${deviceName} ${shared_Installazione}",
+          "mailBodyType": null,
+          "isHtmlTemplate": null,
+          "bodyTemplate": "${Body}\n\nQuesta mail è autogenerata. Non rispondere a questa mail."
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 495,
+          "layoutY": 262
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "create mail body",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var newMsg={};\nnewMsg=msg[0];\n//salvo time ed errore\nmetadata.error_type=newMsg.values.error_type;\n//metadata.time=newMsg.values.timestamp;\n\nvar d = new Date(newMsg.ts);\n//var d = newMsg.ts;\n\nvar timeOffsetInHours  =0;//((d.getTimezoneOffset()/60) * (-1));//+1; //aggiunto il +1 perchè il server ha come timezone offset 0 rispetto a utc\n          \n var datestring =  d.getFullYear() + \"-\" + (\"0\"+(d.getMonth()+1)).slice(-2) + \"-\" + (\"0\" + d.getDate()).slice(-2) + \" \" + (\"0\"+(d.getHours()+timeOffsetInHours)).slice(-2) + \":\" + (\"0\" + d.getMinutes()).slice(-2) + \":\" + (\"0\" + d.getSeconds()).slice(-2);//+ \";\";\nmetadata.time=datestring;\n//verifico quale ha superato la soglia impostata\nif((Math.abs(Number(newMsg.values.Deltaperc_T2C)) > Number(newMsg.values.T2CS_perc)) && (Math.abs(Number(newMsg.values.Deltaperc_T2O)) > Number(newMsg.values.T2OS_perc)))\n{\n    metadata.Movimento=\"Apertura e Chiusura\";\n    metadata.CloseTime = newMsg.values.T2Cc;\n    metadata.Close_Reference=metadata.shared_T2C_reference;\n    metadata.Close_Deltaperc=newMsg.values.Deltaperc_T2C;\n    metadata.OpenTime = newMsg.values.T2Oc;\n    metadata.Open_Reference=metadata.shared_T2O_reference;\n    metadata.Open_Deltaperc=newMsg.values.Deltaperc_T2O;\n\n    metadata.Body=metadata.deviceName+\" \"+metadata.shared_Installazione+\": \"+metadata.time+\" - Movimento di Apertura anomalo di \"+metadata.OpenTime+\"s invece che \"+metadata.Open_Reference+\"s (\"+metadata.Open_Deltaperc+\"%). Movimento di Chiusura anomalo di \"+metadata.CloseTime+\"s invece che \"+metadata.Close_Reference+\"s (\"+metadata.Close_Deltaperc+\"%).\" \n    \n}\nelse if(Math.abs(Number(newMsg.values.Deltaperc_T2O)) > Number(newMsg.values.T2OS_perc)) \n{\n    metadata.Movimento=\"Apertura\";\n    metadata.tempo_movimento = newMsg.values.T2Oc;\n    metadata.Reference=metadata.shared_T2O_reference;\n    metadata.Deltaperc=newMsg.values.Deltaperc_T2O;\n    metadata.Body=metadata.deviceName+\" \"+metadata.shared_Installazione+\": \"+metadata.time+\" - Movimento di \"+metadata.Movimento+\" anomalo di \"+metadata.tempo_movimento+\"s invece che \"+metadata.Reference+\"s (\"+metadata.Deltaperc+\"%).\" \n}\nelse if(Math.abs(Number(newMsg.values.Deltaperc_T2C)) > Number(newMsg.values.T2CS_perc))\n{\n    metadata.Movimento=\"Chiusura\";\n    metadata.tempo_movimento = newMsg.values.T2Cc;\n    metadata.Reference=metadata.shared_T2C_reference;\n    metadata.Deltaperc=newMsg.values.Deltaperc_T2C;\n    metadata.Body=metadata.deviceName+\" \"+metadata.shared_Installazione+\": \" +metadata.time+\" - Movimento di \"+metadata.Movimento+\" anomalo di \"+metadata.tempo_movimento+\"s invece che \"+metadata.Reference+\"s (\"+metadata.Deltaperc+\"%).\" \n}\n\nif (newMsg.values.error_type === \"TC OVER RANGE\") \n{\n    metadata.Body=metadata.deviceName+\" \"+metadata.shared_Installazione+\": \" +metadata.time+\" - Segnalazione CM chiusa per oltre 30 minuti.\"    \n}\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        },
+        "externalId": null
+      }
+    ],
+    "connections": [
+      {
+        "fromIndex": 1,
+        "toIndex": 16,
+        "type": "True"
+      },
+      {
+        "fromIndex": 4,
+        "toIndex": 1,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 5,
+        "toIndex": 9,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 8,
+        "toIndex": 15,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 9,
+        "toIndex": 8,
+        "type": "True"
+      },
+      {
+        "fromIndex": 11,
+        "toIndex": 3,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 12,
+        "toIndex": 7,
+        "type": "Apertura"
+      },
+      {
+        "fromIndex": 12,
+        "toIndex": 13,
+        "type": "Chiusura"
+      },
+      {
+        "fromIndex": 12,
+        "toIndex": 14,
+        "type": "Apertura/Chiusura"
+      },
+      {
+        "fromIndex": 15,
+        "toIndex": 6,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 16,
+        "toIndex": 11,
+        "type": "Success"
+      }
+    ],
+    "ruleChainConnections": null
+  }
+}

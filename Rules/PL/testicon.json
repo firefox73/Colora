@@ -1,0 +1,403 @@
+{
+  "ruleChain": {
+    "additionalInfo": null,
+    "name": "testICON",
+    "type": "CORE",
+    "firstRuleNodeId": null,
+    "root": false,
+    "debugMode": false,
+    "configuration": null,
+    "externalId": null
+  },
+  "metadata": {
+    "firstNodeIndex": 15,
+    "nodes": [
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 106,
+          "layoutY": 673
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "ICON hex2ascii",
+        "debugMode": false,
+        "configuration": {
+          "jsScript": "\n\nif (msg[\"m2m:cin\"] !== undefined)\n{\n    var Newmsg={};\n    //var test = JSON.stringify(msg);\n    Newmsg.ct=msg[\"m2m:cin\"].ct;\n    Newmsg.con=msg[\"m2m:cin\"].con;\n    var MSG;\n    //var test=metadata.deviceName.search(\"CLR-FARM\");\n    //if (test<0) MSG=hexToAscii(msg[\"m2m:cin\"].con);\n    //if (test>=0) MSG=msg[\"m2m:cin\"].con;\n    MSG=hexToAscii(msg[\"m2m:cin\"].con);\n    //var log = new RegExp(\"Log\");\n    //var tel = new RegExp(\"tel\");\n    //var testlog = log.test(MSG);\n    // \"con\": \"74656c656d657472793d20323032302d30382d30362030303a30303a30302c32372e342c35342e332c312c353436382c302e382c3231302c302e302c302e302c302e302c472c412c523b\"\n    \n    //if (testlog) Newmsg.Log=MSG;//fare eventuale parsing del log\n    //var testtel = tel.test(MSG);\n    //if (testtel) Newmsg.telemetry=MSG;//fare eventuale parsing della telemetria\n     Newmsg.MSG=MSG;//fare eventuale parsing della telemetria\n \nreturn {msg: Newmsg, metadata: metadata, msgType: msgType};\n}\nelse\n{\n    return {msg: msg, metadata: metadata, msgType: msgType};\n}\nfunction hexToAscii(str){\nvar    hexString = str;\nvar    strOut = '';\nvar x=0;\n        for (x = 0; x < hexString.length; x += 2) {\n            strOut += String.fromCharCode(parseInt(hexString.substr(x, 2), 16));\n        }\n    return strOut;    \n}"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 861,
+          "layoutY": 351
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbJsFilterNode",
+        "name": "newData?",
+        "debugMode": false,
+        "configuration": {
+          "jsScript": "if (msg.ct==metadata.ct){\n    return false;\n}else return true;\n"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "Nel caso di nuovo dispositivo la chiave ct non è presente il precedente blocco restituisce errore e quindi va messa di defaul un valore",
+          "layoutX": 445,
+          "layoutY": 277
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "First comunication",
+        "debugMode": false,
+        "configuration": {
+          "jsScript": "var Newmsg={};\n//var test = JSON.stringify(msg);\nNewmsg.ct=0;\nmetadata.ct=1;\n//Newmsg.F_T2O=metadata.T2Oc;\n//Newmsg.F_T2C=metadata.T2Cc;\n\n\nreturn {msg: Newmsg, metadata: metadata, msgType: msgType};\n\n"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "layoutX": 105,
+          "layoutY": 602
+        },
+        "type": "org.thingsboard.rule.engine.rest.TbRestApiCallNode",
+        "name": "Get inbox Icon",
+        "debugMode": false,
+        "configuration": {
+          "restEndpointUrlPattern": "https://olivettiiot.tim.it/onem2m/${shared_sim}/nbiot/inbox/la",
+          "requestMethod": "GET",
+          "headers": {
+            "X-M2M-RI": "CIN_",
+            "X-M2M-Origin": "${shared_username}",
+            "Content-Type": "application/vnd.onem2m-res+json",
+            "Accept": "application/vnd.onem2m-res+json",
+            "Authorization": "${shared_authorization}"
+          }
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "layoutX": 1379,
+          "layoutY": 96
+        },
+        "type": "org.thingsboard.rule.engine.rest.TbRestApiCallNode",
+        "name": "Post outbox Icon",
+        "debugMode": false,
+        "configuration": {
+          "restEndpointUrlPattern": "https://olivettiiot.tim.it/onem2m/${shared_sim}/nbiot/outbox",
+          "requestMethod": "POST",
+          "headers": {
+            "X-M2M-RI": "CIN_",
+            "X-M2M-Origin": "${shared_username}",
+            "Content-Type": "application/vnd.onem2m-res+json;ty=4",
+            "Accept": "application/vnd.onem2m-res+json",
+            "Authorization": "${shared_authorization}"
+          }
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "layoutX": 1371,
+          "layoutY": 241,
+          "description": "Converte il comando presente in shared_ScheduledCommand in text(hex)"
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "ICON test(ascii2hex)",
+        "debugMode": false,
+        "configuration": {
+          "jsScript": "var Newmsg={};\nvar m2mh={};\nvar m2m={};\n\nm2m.lbl= [ \"proto:udp\", \"port:5685\" ];\nm2m.cnf= \"text/plain:0\";\n//m2m.con=\"23232341542b444154543d3f3b\";\nm2m.con=ascii_to_hexa(metadata.shared_ScheduledCommand);\nm2mh = {'m2m:cin':m2m};\nNewmsg=m2mh;\nreturn {msg: Newmsg, metadata: metadata, msgType: msgType};\n\n\nfunction ascii_to_hexa(str)\n  {\n\tvar arr1 = [];\n\tfor (var n = 0, l = str.length; n < l; n ++) \n     {\n\t\tvar hex = Number(str.charCodeAt(n)).toString(16);\n\t\tarr1.push(hex);\n\t }\n\treturn arr1.join('');\n   }"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "layoutX": 1610,
+          "layoutY": 182
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "save shared attributes",
+        "debugMode": false,
+        "configuration": {
+          "scope": "SHARED_SCOPE"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "layoutX": 1092,
+          "layoutY": 246
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbJsFilterNode",
+        "name": "NewCommand?",
+        "debugMode": false,
+        "configuration": {
+          "jsScript": "if ((metadata.shared_ScheduledCommand === \"0\")|| (metadata.shared_ScheduledCommand === undefined)){\n    return false;\n}else return true;\n"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "layoutX": 1657,
+          "layoutY": 101
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "ICON hex2ascii",
+        "debugMode": false,
+        "configuration": {
+          "jsScript": "//Aggiornamento negli attributi del solo campo SheduledCommand\nvar Newmsg={};\n//NewMetadata={};\nNewmsg.ScheduledCommand = \"0\";\n//NewMetadata.deviceName =metadata.deviceName;\n//metadata.shared_NewCommand = \"\";\nmsgType='POST_ATTRIBUTES_REQUEST';\nreturn {msg: Newmsg, metadata: metadata, msgType: msgType};\n"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "layoutX": 441,
+          "layoutY": 376
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgTimeseriesNode",
+        "name": "Default Value",
+        "debugMode": false,
+        "configuration": {
+          "defaultTTL": 0
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "Gestisce i due eventuali msg provenienti da icon verifica se sono più recenti rispetto al ct salvato e quindi crea un unico MSG che deve poi successivamente essere parsato",
+          "layoutX": 895,
+          "layoutY": 71
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "ICON hex2ascii",
+        "debugMode": false,
+        "configuration": {
+          "jsScript": "////////////////////////////////////////////////////////////////////////////////////////////////////////\n//se nel messaggio che arriva non sono presenti le parentesi [] all'inizio e fine si ha un errore sul\n//forEach. Per questo sono state aggiunte queste righe per aggiugere tali parentesi se assenti.\nvar n=JSON.stringify(msg).startsWith(\"[\");\nif (n===true) msg=msg;\nelse \n{\n    msg=\"[\"+JSON.stringify(msg)+\"]\";\n    msg=JSON.parse(msg);\n}\n////////////////////////////////////////////////////////////////////////////////////////////////////////\n\n//if (msg[\"m2m:cin\"] !== undefined)\n//{\n    var index_msg='';\n    var Newmsg={};\n    var Data='';\n    Newmsg.MSG='';\n    //converto il ct già presente, in ms\n    var ct = metadata.ct;\n    //var ct =\"20230301T155228,000000\";\n    //var ct =\"20230302T154411,000000\";\n    var array = ct.split(',');\n    Data=array[0].substring(0, 4)+\"-\"+array[0].substring(4,6)+\"-\"+array[0].substring(6, 11)+\":\"+array[0].substring(11, 13)+\":\"+array[0].substring(13, 15);\n    var d= new Date(Data);\n    var ms_ct= d.getTime();\n    \n    //converto i ct presenti nei msg in ms e verifico se sono successivi a quello già salvato\n    // se vero allora i msg devono essere considerati e passati alla rules per il parsing\n    msg.forEach(myfunction);\n    \n    function myfunction(item,index){\n      index_msg=hexToAscii(msg[index][\"m2m:cin\"].con);\n      Newmsg.ct=msg[index][\"m2m:cin\"].ct;\n      array = Newmsg.ct.split(',');\n      Data=array[0].substring(0, 4)+\"-\"+array[0].substring(4,6)+\"-\"+array[0].substring(6, 11)+\":\"+array[0].substring(11, 13)+\":\"+array[0].substring(13, 15);\n      d= new Date(Data);\n      var ms_new_ct= d.getTime();\n      if(ms_new_ct >= ms_ct) Newmsg.MSG=Newmsg.MSG+index_msg;\n    }\n    //salvo l'ultimo ct\n    Newmsg.ct=msg[0][\"m2m:cin\"].ct;\n            \n    \n    return {msg: Newmsg, metadata: metadata, msgType: msgType};\n/*}\nelse\n{\n    return {msg: msg, metadata: metadata, msgType: msgType};\n}*/\n\n\nfunction hexToAscii(str){\nvar    hexString = str;\nvar    strOut = '';\nvar x=0;\n        for (x = 0; x < hexString.length; x += 2) {\n            strOut += String.fromCharCode(parseInt(hexString.substr(x, 2), 16));\n        }\n    return strOut;    \n}"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 1338,
+          "layoutY": 577
+        },
+        "type": "org.thingsboard.rule.engine.flow.TbRuleChainInputNode",
+        "name": "PL Embedded MSG",
+        "debugMode": false,
+        "configuration": {
+          "ruleChainId": "8c077300-c328-11ed-a76d-9955dd563d2d"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1056,
+          "layoutY": 478
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbJsSwitchNode",
+        "name": "switch by name",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "function nextRelation(metadata, msg) {\nvar PL = new RegExp(\"PL\");\nvar noparse = 1;\n\nif(PL.test(metadata.deviceName))  return ['PL'];\nif (!(PL.test(metadata.deviceName))) return ['NOPARSE'];\n}\n\nreturn nextRelation(metadata, msg);"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1469,
+          "layoutY": 474
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgTimeseriesNode",
+        "name": "save telemetry",
+        "debugMode": false,
+        "configuration": {
+          "defaultTTL": 0,
+          "skipLatestPersistence": false,
+          "useServerTs": false
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 560,
+          "layoutY": 65
+        },
+        "type": "org.thingsboard.rule.engine.rest.TbRestApiCallNode",
+        "name": "Get last 2 inbox Icon",
+        "debugMode": false,
+        "configuration": {
+          "restEndpointUrlPattern": "https://olivettiiot.tim.it/onem2m/${shared_sim}/nbiot/inbox?fu=2&ty=4&lim=2",
+          "requestMethod": "GET",
+          "useSimpleClientHttpFactory": false,
+          "ignoreRequestBody": false,
+          "enableProxy": false,
+          "useSystemProxyProperties": false,
+          "proxyScheme": null,
+          "proxyHost": null,
+          "proxyPort": 0,
+          "proxyUser": null,
+          "proxyPassword": null,
+          "readTimeoutMs": 0,
+          "maxParallelRequestsCount": 0,
+          "headers": {
+            "Content-Type": "application/vnd.onem2m-res+json",
+            "Accept": "application/vnd.onem2m-res+json",
+            "X-M2M-RI": "CIN_",
+            "X-M2M-Origin": "${shared_username}",
+            "Authorization": "${shared_authorization}"
+          },
+          "useRedisQueueForMsgPersistence": false,
+          "trimQueue": false,
+          "maxQueueSize": 0,
+          "credentials": {
+            "type": "anonymous"
+          }
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 261,
+          "layoutY": 160
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetAttributesNode",
+        "name": "read sim user auth",
+        "debugMode": false,
+        "configuration": {
+          "tellFailureIfAbsent": true,
+          "clientAttributeNames": [],
+          "sharedAttributeNames": [
+            "sim",
+            "username",
+            "authorization",
+            "ScheduledCommand"
+          ],
+          "serverAttributeNames": [],
+          "latestTsKeyNames": [
+            "ct"
+          ],
+          "getLatestValueWithTs": false
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1135,
+          "layoutY": 352
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Isolated ct",
+        "debugMode": false,
+        "configuration": {
+          "jsScript": "var Newmsg={};\nNewmsg.ct=msg.ct;\n\nreturn {msg: Newmsg, metadata: metadata, msgType: msgType};"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1396,
+          "layoutY": 350
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgTimeseriesNode",
+        "name": "save ct",
+        "debugMode": false,
+        "configuration": {
+          "defaultTTL": 0,
+          "skipLatestPersistence": false,
+          "useServerTs": false
+        },
+        "externalId": null
+      }
+    ],
+    "connections": [
+      {
+        "fromIndex": 1,
+        "toIndex": 7,
+        "type": "True"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 12,
+        "type": "True"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 16,
+        "type": "True"
+      },
+      {
+        "fromIndex": 2,
+        "toIndex": 9,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 3,
+        "toIndex": 0,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 4,
+        "toIndex": 8,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 5,
+        "toIndex": 4,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 7,
+        "toIndex": 5,
+        "type": "True"
+      },
+      {
+        "fromIndex": 8,
+        "toIndex": 6,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 10,
+        "toIndex": 1,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 12,
+        "toIndex": 11,
+        "type": "PL"
+      },
+      {
+        "fromIndex": 12,
+        "toIndex": 13,
+        "type": "NOPARSE"
+      },
+      {
+        "fromIndex": 14,
+        "toIndex": 10,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 15,
+        "toIndex": 2,
+        "type": "Failure"
+      },
+      {
+        "fromIndex": 15,
+        "toIndex": 14,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 16,
+        "toIndex": 17,
+        "type": "Success"
+      }
+    ],
+    "ruleChainConnections": null
+  }
+}

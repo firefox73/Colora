@@ -1,0 +1,487 @@
+{
+  "ruleChain": {
+    "additionalInfo": {
+      "description": ""
+    },
+    "name": "Trigger_Generator_PL",
+    "type": "CORE",
+    "firstRuleNodeId": null,
+    "root": false,
+    "debugMode": false,
+    "configuration": null,
+    "externalId": null
+  },
+  "metadata": {
+    "firstNodeIndex": null,
+    "nodes": [
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 134,
+          "layoutY": 313
+        },
+        "type": "org.thingsboard.rule.engine.debug.TbMsgGeneratorNode",
+        "name": "request PL4_Be",
+        "debugMode": false,
+        "configuration": {
+          "msgCount": 0,
+          "periodInSeconds": 10,
+          "jsScript": "var msg = {};\nvar metadata = {deviceName :\"PL4_Be\" };\nvar msgType = \"POST_TELEMETRY_REQUEST\";\n\nreturn { msg: msg, metadata: metadata, msgType: msgType };",
+          "originatorId": "e3a996c0-c322-11ed-a76d-9955dd563d2d",
+          "originatorType": "DEVICE"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 133,
+          "layoutY": 251
+        },
+        "type": "org.thingsboard.rule.engine.debug.TbMsgGeneratorNode",
+        "name": "request PL4_Au",
+        "debugMode": false,
+        "configuration": {
+          "msgCount": 0,
+          "periodInSeconds": 10,
+          "jsScript": "var msg = {};\nvar metadata = {deviceName :\"PL4_Au\" };\nvar msgType = \"POST_TELEMETRY_REQUEST\";\n\nreturn { msg: msg, metadata: metadata, msgType: msgType };",
+          "originatorId": "fc840bd0-c322-11ed-a76d-9955dd563d2d",
+          "originatorType": "DEVICE"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 133,
+          "layoutY": 374
+        },
+        "type": "org.thingsboard.rule.engine.debug.TbMsgGeneratorNode",
+        "name": "request PL4_Ae",
+        "debugMode": false,
+        "configuration": {
+          "msgCount": 0,
+          "periodInSeconds": 10,
+          "jsScript": "var msg = {};\nvar metadata = {deviceName :\"PL4_Ae\" };\nvar msgType = \"POST_TELEMETRY_REQUEST\";\n\nreturn { msg: msg, metadata: metadata, msgType: msgType };",
+          "originatorId": "1841a3a0-c323-11ed-a76d-9955dd563d2d",
+          "originatorType": "DEVICE"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 135,
+          "layoutY": 436
+        },
+        "type": "org.thingsboard.rule.engine.debug.TbMsgGeneratorNode",
+        "name": "request PL4_Bu",
+        "debugMode": false,
+        "configuration": {
+          "msgCount": 0,
+          "periodInSeconds": 10,
+          "jsScript": "var msg = {};\nvar metadata = {deviceName :\"PL4_Bu\" };\nvar msgType = \"POST_TELEMETRY_REQUEST\";\n\nreturn { msg: msg, metadata: metadata, msgType: msgType };",
+          "originatorId": "2a06bdf0-c323-11ed-a76d-9955dd563d2d",
+          "originatorType": "DEVICE"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 581,
+          "layoutY": 813
+        },
+        "type": "org.thingsboard.rule.engine.flow.TbRuleChainInputNode",
+        "name": "to Rule ICON",
+        "debugMode": false,
+        "configuration": {
+          "ruleChainId": "58711eb0-c328-11ed-a76d-9955dd563d2d"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 812,
+          "layoutY": 578
+        },
+        "type": "org.thingsboard.rule.engine.debug.TbMsgGeneratorNode",
+        "name": "request OpenWeather",
+        "debugMode": false,
+        "configuration": {
+          "msgCount": 0,
+          "periodInSeconds": 3600,
+          "jsScript": "var msg = { temp: 42, humidity: 77 };\nvar metadata = { data: 40, deviceName :\"OpenWeather\" };\nvar msgType = \"POST_TELEMETRY_REQUEST\";\n\nreturn { msg: msg, metadata: metadata, msgType: msgType };",
+          "originatorId": "6ba60ef0-c323-11ed-a76d-9955dd563d2d",
+          "originatorType": "DEVICE"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1163,
+          "layoutY": 578
+        },
+        "type": "org.thingsboard.rule.engine.flow.TbRuleChainInputNode",
+        "name": "to Rule OpenWeather",
+        "debugMode": false,
+        "configuration": {
+          "ruleChainId": "89bb7ca0-c327-11ed-a76d-9955dd563d2d"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 552,
+          "layoutY": 555
+        },
+        "type": "org.thingsboard.rule.engine.debug.TbMsgGeneratorNode",
+        "name": "request CLR-PL_test",
+        "debugMode": false,
+        "configuration": {
+          "msgCount": 0,
+          "periodInSeconds": 10,
+          "jsScript": "var msg = {};\nvar metadata = {deviceName :\"CLR-PL_test\" };\nvar msgType = \"POST_TELEMETRY_REQUEST\";\n\nreturn { msg: msg, metadata: metadata, msgType: msgType };",
+          "originatorId": "ec433be0-c4b4-11ed-a76d-9955dd563d2d",
+          "originatorType": "DEVICE"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 136,
+          "layoutY": 594
+        },
+        "type": "org.thingsboard.rule.engine.debug.TbMsgGeneratorNode",
+        "name": "request PL11_Be",
+        "debugMode": false,
+        "configuration": {
+          "msgCount": 0,
+          "periodInSeconds": 10,
+          "jsScript": "var msg = {};\nvar metadata = {deviceName :\"PL11_Be\" };\nvar msgType = \"POST_TELEMETRY_REQUEST\";\n\nreturn { msg: msg, metadata: metadata, msgType: msgType };",
+          "originatorId": "ac07b001-ef3a-11ed-a76d-9955dd563d2d",
+          "originatorType": "DEVICE"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 135,
+          "layoutY": 532
+        },
+        "type": "org.thingsboard.rule.engine.debug.TbMsgGeneratorNode",
+        "name": "request PL11_Au",
+        "debugMode": false,
+        "configuration": {
+          "msgCount": 0,
+          "periodInSeconds": 10,
+          "jsScript": "var msg = {};\nvar metadata = {deviceName :\"PL11_Au\" };\nvar msgType = \"POST_TELEMETRY_REQUEST\";\n\nreturn { msg: msg, metadata: metadata, msgType: msgType };",
+          "originatorId": "ac08c174-ef3a-11ed-a76d-9955dd563d2d",
+          "originatorType": "DEVICE"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 135,
+          "layoutY": 655
+        },
+        "type": "org.thingsboard.rule.engine.debug.TbMsgGeneratorNode",
+        "name": "request PL11_Ae",
+        "debugMode": false,
+        "configuration": {
+          "msgCount": 0,
+          "periodInSeconds": 10,
+          "jsScript": "var msg = {};\nvar metadata = {deviceName :\"PL11_Ae\" };\nvar msgType = \"POST_TELEMETRY_REQUEST\";\n\nreturn { msg: msg, metadata: metadata, msgType: msgType };",
+          "originatorId": "ac07b000-ef3a-11ed-a76d-9955dd563d2d",
+          "originatorType": "DEVICE"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 137,
+          "layoutY": 717
+        },
+        "type": "org.thingsboard.rule.engine.debug.TbMsgGeneratorNode",
+        "name": "request PL11_Bu",
+        "debugMode": false,
+        "configuration": {
+          "msgCount": 0,
+          "periodInSeconds": 10,
+          "jsScript": "var msg = {};\nvar metadata = {deviceName :\"PL11_Bu\" };\nvar msgType = \"POST_TELEMETRY_REQUEST\";\n\nreturn { msg: msg, metadata: metadata, msgType: msgType };",
+          "originatorId": "ac08c170-ef3a-11ed-a76d-9955dd563d2d",
+          "originatorType": "DEVICE"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 136,
+          "layoutY": 876
+        },
+        "type": "org.thingsboard.rule.engine.debug.TbMsgGeneratorNode",
+        "name": "request PL1_Be",
+        "debugMode": false,
+        "configuration": {
+          "msgCount": 0,
+          "periodInSeconds": 10,
+          "jsScript": "var msg = {};\nvar metadata = {deviceName :\"PL1_Be\" };\nvar msgType = \"POST_TELEMETRY_REQUEST\";\n\nreturn { msg: msg, metadata: metadata, msgType: msgType };",
+          "originatorId": "ac084c40-ef3a-11ed-a76d-9955dd563d2d",
+          "originatorType": "DEVICE"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 135,
+          "layoutY": 814
+        },
+        "type": "org.thingsboard.rule.engine.debug.TbMsgGeneratorNode",
+        "name": "request PL1_Au",
+        "debugMode": false,
+        "configuration": {
+          "msgCount": 0,
+          "periodInSeconds": 10,
+          "jsScript": "var msg = {};\nvar metadata = {deviceName :\"PL1_Au\" };\nvar msgType = \"POST_TELEMETRY_REQUEST\";\n\nreturn { msg: msg, metadata: metadata, msgType: msgType };",
+          "originatorId": "ac089a60-ef3a-11ed-a76d-9955dd563d2d",
+          "originatorType": "DEVICE"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 135,
+          "layoutY": 937
+        },
+        "type": "org.thingsboard.rule.engine.debug.TbMsgGeneratorNode",
+        "name": "request PL1_Ae",
+        "debugMode": false,
+        "configuration": {
+          "msgCount": 0,
+          "periodInSeconds": 10,
+          "jsScript": "var msg = {};\nvar metadata = {deviceName :\"PL1_Ae\" };\nvar msgType = \"POST_TELEMETRY_REQUEST\";\n\nreturn { msg: msg, metadata: metadata, msgType: msgType };",
+          "originatorId": "ac0788f1-ef3a-11ed-a76d-9955dd563d2d",
+          "originatorType": "DEVICE"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 137,
+          "layoutY": 999
+        },
+        "type": "org.thingsboard.rule.engine.debug.TbMsgGeneratorNode",
+        "name": "request PL1_Bu",
+        "debugMode": false,
+        "configuration": {
+          "msgCount": 0,
+          "periodInSeconds": 10,
+          "jsScript": "var msg = {};\nvar metadata = {deviceName :\"PL1_Bu\" };\nvar msgType = \"POST_TELEMETRY_REQUEST\";\n\nreturn { msg: msg, metadata: metadata, msgType: msgType };",
+          "originatorId": "ac0788f0-ef3a-11ed-a76d-9955dd563d2d",
+          "originatorType": "DEVICE"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 138,
+          "layoutY": 1106
+        },
+        "type": "org.thingsboard.rule.engine.debug.TbMsgGeneratorNode",
+        "name": "request PL12_A",
+        "debugMode": false,
+        "configuration": {
+          "msgCount": 0,
+          "periodInSeconds": 10,
+          "jsScript": "var msg = {};\nvar metadata = {deviceName :\"PL12_A\" };\nvar msgType = \"POST_TELEMETRY_REQUEST\";\n\nreturn { msg: msg, metadata: metadata, msgType: msgType };",
+          "originatorId": "ac0a4810-ef3a-11ed-a76d-9955dd563d2d",
+          "originatorType": "DEVICE"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 140,
+          "layoutY": 1168
+        },
+        "type": "org.thingsboard.rule.engine.debug.TbMsgGeneratorNode",
+        "name": "request PL12_B",
+        "debugMode": false,
+        "configuration": {
+          "msgCount": 0,
+          "periodInSeconds": 10,
+          "jsScript": "var msg = {};\nvar metadata = {deviceName :\"PL12_B\" };\nvar msgType = \"POST_TELEMETRY_REQUEST\";\n\nreturn { msg: msg, metadata: metadata, msgType: msgType };",
+          "originatorId": "ac0a6f21-ef3a-11ed-a76d-9955dd563d2d",
+          "originatorType": "DEVICE"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 575,
+          "layoutY": 964
+        },
+        "type": "org.thingsboard.rule.engine.debug.TbMsgGeneratorNode",
+        "name": "request PL_test1",
+        "debugMode": false,
+        "configuration": {
+          "msgCount": 1,
+          "periodInSeconds": 100,
+          "jsScript": "var msg = {};\nvar metadata = {deviceName :\"PL_test1\" };\nvar msgType = \"POST_TELEMETRY_REQUEST\";\n\nreturn { msg: msg, metadata: metadata, msgType: msgType };",
+          "originatorId": "df0c6a30-f0d0-11ed-b625-a1f12596c0eb",
+          "originatorType": "DEVICE"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 537,
+          "layoutY": 1043
+        },
+        "type": "org.thingsboard.rule.engine.debug.TbMsgGeneratorNode",
+        "name": "request PL_test2",
+        "debugMode": false,
+        "configuration": {
+          "msgCount": 1,
+          "periodInSeconds": 100,
+          "jsScript": "var msg = {};\nvar metadata = {deviceName :\"PL_test2\" };\nvar msgType = \"POST_TELEMETRY_REQUEST\";\n\nreturn { msg: msg, metadata: metadata, msgType: msgType };",
+          "originatorId": "df0d2d81-f0d0-11ed-b625-a1f12596c0eb",
+          "originatorType": "DEVICE"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 718,
+          "layoutY": 682
+        },
+        "type": "org.thingsboard.rule.engine.debug.TbMsgGeneratorNode",
+        "name": "request PL_Network_Sniffer",
+        "debugMode": false,
+        "configuration": {
+          "msgCount": 1,
+          "periodInSeconds": 100,
+          "jsScript": "var msg = {};\nvar metadata = {deviceName :\"PL_Network_Sniffer\" };\nvar msgType = \"POST_TELEMETRY_REQUEST\";\n\nreturn { msg: msg, metadata: metadata, msgType: msgType };",
+          "originatorId": "7b212c10-f943-11ed-b625-a1f12596c0eb",
+          "originatorType": "DEVICE"
+        },
+        "externalId": null
+      }
+    ],
+    "connections": [
+      {
+        "fromIndex": 0,
+        "toIndex": 4,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 4,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 2,
+        "toIndex": 4,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 3,
+        "toIndex": 4,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 5,
+        "toIndex": 6,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 7,
+        "toIndex": 4,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 8,
+        "toIndex": 4,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 9,
+        "toIndex": 4,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 10,
+        "toIndex": 4,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 11,
+        "toIndex": 4,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 12,
+        "toIndex": 4,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 13,
+        "toIndex": 4,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 14,
+        "toIndex": 4,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 15,
+        "toIndex": 4,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 16,
+        "toIndex": 4,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 17,
+        "toIndex": 4,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 18,
+        "toIndex": 4,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 19,
+        "toIndex": 4,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 20,
+        "toIndex": 4,
+        "type": "Success"
+      }
+    ],
+    "ruleChainConnections": null
+  }
+}

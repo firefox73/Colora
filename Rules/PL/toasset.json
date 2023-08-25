@@ -1,0 +1,283 @@
+{
+  "ruleChain": {
+    "additionalInfo": null,
+    "name": "toAsset",
+    "type": "CORE",
+    "firstRuleNodeId": null,
+    "root": false,
+    "debugMode": false,
+    "configuration": null,
+    "externalId": null
+  },
+  "metadata": {
+    "firstNodeIndex": null,
+    "nodes": [
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 176,
+          "layoutY": 438
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbChangeOriginatorNode",
+        "name": "change to asset",
+        "debugMode": true,
+        "configuration": {
+          "originatorSource": "RELATED",
+          "relationsQuery": {
+            "direction": "TO",
+            "maxLevel": 1,
+            "filters": [
+              {
+                "relationType": "Contains",
+                "entityTypes": [
+                  "ASSET"
+                ]
+              }
+            ]
+          }
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 443,
+          "layoutY": 341
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgTimeseriesNode",
+        "name": "save to asset",
+        "debugMode": true,
+        "configuration": {
+          "defaultTTL": 1
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 177,
+          "layoutY": 341
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "AttrNametoKey",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "\nvar newMsg = {};\n//var msg1=msg[0].values;\n       // newMsg = {'temperature':msg.temperature,'Device':metadata.shared_Name};\n         //newMsg = {'metadata.shared_Name':msg.temperature};\n        var Name =metadata.deviceName;\n//        var error =metadata.error_type;\n//        newMsg.error=msg[0].values.error_type;\n //       newMsg.time=msg[0].values.timestamp;\n\n//         if (newMsg.error ==='NO ERROR') newMsg.state='ACTIVE';\n//         else newMsg.state='ERROR';\n\n        newMsg.MSG0=msg[0].values.MSG;\n        newMsg.MSG1=msg[1].values.MSG;\n        \n        if(newMsg.MSG0.startsWith(\"LOGD\")) newMsg.LOGD=msg[0].values;\n        else if (newMsg.MSG1.startsWith(\"LOGD\")) newMsg=msg[1].values;\n         \n          //newMsg = {'metadata.shared_Name':msg.temperature};\nreturn {\n    //msg: msg,\n    msg: newMsg,\n    metadata: metadata,\n    msgType:msgType\n};\n\n"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 452,
+          "layoutY": 437
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetAttributesNode",
+        "name": "get attribute",
+        "debugMode": true,
+        "configuration": {
+          "tellFailureIfAbsent": true,
+          "clientAttributeNames": [],
+          "sharedAttributeNames": [],
+          "serverAttributeNames": [
+            "NextLogDay"
+          ],
+          "latestTsKeyNames": [
+            "PL4_Ae",
+            "PL4_Au",
+            "PL4_Be",
+            "PL4_Bu",
+            "PL1_Ae",
+            "PL1_Au",
+            "PL1_Be",
+            "PL1_Bu",
+            "PL11_Au",
+            "PL11_Ae",
+            "PL11_Be",
+            "PL11_Bu",
+            "PL12_A",
+            "PL12_B"
+          ],
+          "getLatestValueWithTs": false
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 727,
+          "layoutY": 438
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbJsFilterNode",
+        "name": "verifica se trascorse 24h",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "//var d = Date.parse(\"2021-08-12 14:14:27\");\nvar d = Date.parse(metadata.ss_NextLogDay);\nvar day_ms = 24*3600*1000;\n//var output_msg=msg;\n//var newMSG=msg;\n//var n=JSON.stringify(output_msg).search(\"TotEnA\");\n\n//if ((metadata.ts-d)>=day_ms) {return true;}\nif ((msg.ts-d)>=day_ms) {return true;}\n\n//if (((metadata.ts>d)) && (n>0)){\n//if (((metadata.ts-d)>=day_ms) && (n>0)){return true;}\n//if (((metadata.ts-d)>=day_ms) && ((n>0)||(m>0)||(p>0)||(g>0))){return true;}\nelse return false;"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 703,
+          "layoutY": 562
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Update SS attribute",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var newType = \"POST_ATTRIBUTES_REQUEST\";\n\nvar NextLog = new Date(metadata.ss_NextLogDay);\nvar FreqLog = 24;//metadata.ss_FreqLog;\nvar n = NextLog.valueOf();\nn=n+1000*FreqLog*3600;\n//metadata.ss_NextLog=\"2021-08-12 14:14:27\";\n var m=new Date(n).toLocaleString();\nvar newmsg = {\"NextLog\": m}; \nreturn {\n    msg: newmsg,\n    metadata: metadata,\n    msgType:newType// msgType\n};\n\n"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 712,
+          "layoutY": 651
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "save attribute",
+        "debugMode": false,
+        "configuration": {
+          "scope": "SERVER_SCOPE",
+          "notifyDevice": false
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1288,
+          "layoutY": 433
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbSendEmailNode",
+        "name": "Send to Tentant and info@coing.it",
+        "debugMode": true,
+        "configuration": {
+          "useSystemSmtpSettings": true,
+          "smtpHost": "localhost",
+          "smtpPort": 25,
+          "username": null,
+          "password": null,
+          "smtpProtocol": "smtp",
+          "timeout": 10000,
+          "enableTls": false,
+          "tlsVersion": "TLSv1.2",
+          "enableProxy": false,
+          "proxyHost": null,
+          "proxyPort": null,
+          "proxyUser": null,
+          "proxyPassword": null
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "Prova mail",
+          "layoutX": 993,
+          "layoutY": 441
+        },
+        "type": "org.thingsboard.rule.engine.mail.TbMsgToEmailNode",
+        "name": "Email",
+        "debugMode": true,
+        "configuration": {
+          "fromTemplate": "noreply@coing.it",
+          "toTemplate": "tecnico@coing.it",
+          "ccTemplate": "",
+          "bccTemplate": null,
+          "subjectTemplate": "test Log Giornaliero ",
+          "mailBodyType": null,
+          "isHtmlTemplate": null,
+          "bodyTemplate": "Medie Giornaliere\n\n${Body}\n\nQuesta mail è autogenerata. Non rispondere a questa mail."
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 97,
+          "layoutY": 228
+        },
+        "type": "org.thingsboard.rule.engine.debug.TbMsgGeneratorNode",
+        "name": "test",
+        "debugMode": true,
+        "configuration": {
+          "msgCount": 1,
+          "periodInSeconds": 2,
+          "jsScript": "var msg = [{\n    \"ts\": 1684969222000,\n    \"values\": {\n        \"MSG\": \"telemetryPL=2023-05-24 23:00:22,111,0,44,0, 0,98,-1.00,-0.04,0.07,404,0,-84\",\n        \"ct\": \"20230525T073733,000000\",\n        \"utc_timestamp\": \"2023-05-24 23:00:22+0000\",\n        \"ts\": 1684969222000,\n        \"timestamp\": \"2023-05-25 01:00:22\",\n        \"num_azionamenti_PL\": \"111\",\n        \"T2Oc\": 0,\n        \"T2Cc\": 4.4,\n        \"TCc\": 0,\n        \"PL_state\": \"00\",\n        \"SM_state\": \"0\",\n        \"SM\": \"SM_SB\",\n        \"error_state\": \"0\",\n        \"Batt\": \"98\",\n        \"x_acc\": \"-1.00\",\n        \"y_acc\": \"-0.04\",\n        \"z_acc\": \"0.07\",\n        \"sc_pci\": \"404\",\n        \"sc_ecl\": \"0\",\n        \"sc_rssi\": \"-84\",\n        \"operational_time\": 9.4,\n        \"error_type\": \"NO ERROR\",\n        \"angle\": 0,\n        \"T2CS_perc\": \"50\",\n        \"T2OS_perc\": \"50\",\n        \"Deltaperc_T2O\": -100,\n        \"Deltaperc_T2C\": -2.22\n    }\n}, {\n    \"ts\": 1684969011000,\n    \"values\": {\n        \"MSG\": \"LOGD:838,1684969011,111,43,49,1021, 0,44,47,43,43,48,49,0\",\n        \"ct\": \"20230525T073733,000000\",\n        \"ts\": 1684969011000,\n        \"timestamp_log\": \"2023-05-25 00:56:51\",\n        \"num_azionamenti_PL_log\": \"111\",\n        \"PL_T2O_time_log\": 4.3,\n        \"PL_T2C_time_log\": 4.9,\n        \"PL_TC_time_log\": 102.1,\n        \"PL_state_log\": \"00\",\n        \"PL_T2O_Average_log\": 4.4,\n        \"PL_T2C_Average_log\": 4.7,\n        \"PL_T2O_min_log\": 4.3,\n        \"PL_T2C_min_log\": 4.3,\n        \"PL_T2O_Max_log\": 4.8,\n        \"PL_T2C_Max_log\": 4.9,\n        \"num_PL_TotNoModel_log\": \"0\",\n        \"T2CS_perc_log\": \"50\",\n        \"T2OS_perc_log\": \"50\",\n        \"Deltaperc_T2O_avg_log\": 0,\n        \"Deltaperc_T2C_avg_log\": 4.44,\n        \"Deltaperc_T2O_min_log\": -2.27,\n        \"Deltaperc_T2C_min_log\": -4.44,\n        \"Deltaperc_T2O_Max_log\": 9.09,\n        \"Deltaperc_T2C_Max_log\": 8.89,\n        \"Deltaperc_T2O_Plot\": 0,\n        \"Deltaperc_T2C_Plot\": 4.44,\n        \"SM_state_log\": \"0\",\n        \"error_state_log\": \"0\",\n        \"SM_log\": \"SM_SB\",\n        \"error_type_log\": \"NO ERROR\",\n        \"angle_log\": 0\n    }\n}];\nvar metadata = { ss_NextLogDay: \"2023-05-24 00:54:27\"};\nmetadata.deviceName=\"PL11_Ae\";\nmetadata.shared_T2O_reference=4.4;\nmetadata.shared_T2C_reference=4.4;\nmetadata.shared_Installazione=\"Seveso Km 21+426\"\nvar msgType = \"POST_TELEMETRY_REQUEST\";\n\nreturn { msg: msg, metadata: metadata, msgType: msgType };",
+          "originatorId": "ac07b000-ef3a-11ed-a76d-9955dd563d2d",
+          "originatorType": "DEVICE"
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 851,
+          "layoutY": 326
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "create mail body",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "var newMsg={};\nnewMsg=msg;\n//salvo time ed errore\n//metadata.error_type=newMsg.values.error_type;\n//metadata.time=newMsg.values.timestamp;\n\nmetadata.sito=metadata.shared_Installazione;\n//metadata.Body=msg[0];\nmetadata.time=newMsg.timestamp_log;\nmetadata.Open=newMsg.PL_T2O_Average_log;\nmetadata.Close=newMsg.PL_T2C_Average_log;\nmetadata.Open_Scost=newMsg.Deltaperc_T2O_avg_log;\nmetadata.Close_Scost=newMsg.Deltaperc_T2C_avg_log;\nmetadata.Open_Reference=metadata.shared_T2O_reference;\nmetadata.Close_Reference=metadata.shared_T2C_reference;\nmetadata.Body=metadata.sito+\" \"+metadata.deviceName+\": \"+metadata.time+\": Apertura: \"+metadata.Open+\"s - valore di riferimento: \"+metadata.Open_Reference+\"s (\"+metadata.Open_Scost+\"%). Chiusura: \"+metadata.Close+\"s - valore di riferimento: \"+metadata.Close_Reference+\"s (\"+metadata.Close_Scost+\"%).\"\n/*var d = new Date(newMsg.ts);\n//var d = newMsg.ts;\n\nvar timeOffsetInHours  =0;//((d.getTimezoneOffset()/60) * (-1));//+1; //aggiunto il +1 perchè il server ha come timezone offset 0 rispetto a utc\n          \n var datestring =  d.getFullYear() + \"-\" + (\"0\"+(d.getMonth()+1)).slice(-2) + \"-\" + (\"0\" + d.getDate()).slice(-2) + \" \" + (\"0\"+(d.getHours()+timeOffsetInHours)).slice(-2) + \":\" + (\"0\" + d.getMinutes()).slice(-2) + \":\" + (\"0\" + d.getSeconds()).slice(-2);//+ \";\";\nmetadata.time=datestring;\n//verifico quale ha superato la soglia impostata\nif((Math.abs(Number(newMsg.values.Deltaperc_T2C)) > Number(newMsg.values.T2CS_perc)) && (Math.abs(Number(newMsg.values.Deltaperc_T2O)) > Number(newMsg.values.T2OS_perc)))\n{\n    metadata.Movimento=\"Apertura e Chiusura\";\n    metadata.CloseTime = newMsg.values.T2Cc;\n    metadata.Close_Reference=metadata.shared_T2C_reference;\n    metadata.Close_Deltaperc=newMsg.values.Deltaperc_T2C;\n    metadata.OpenTime = newMsg.values.T2Oc;\n    metadata.Open_Reference=metadata.shared_T2O_reference;\n    metadata.Open_Deltaperc=newMsg.values.Deltaperc_T2O;\n\n    metadata.Body=metadata.deviceName+\" \"+metadata.shared_Installazione+\": \"+metadata.time+\" - Movimento di Apertura anomalo di \"+metadata.OpenTime+\"s invece che \"+metadata.Open_Reference+\"s (\"+metadata.Open_Deltaperc+\"%). Movimento di Chiusura anomalo di \"+metadata.CloseTime+\"s invece che \"+metadata.Close_Reference+\"s (\"+metadata.Close_Deltaperc+\"%).\" \n    \n}\nelse if(Math.abs(Number(newMsg.values.Deltaperc_T2O)) > Number(newMsg.values.T2OS_perc)) \n{\n    metadata.Movimento=\"Apertura\";\n    metadata.tempo_movimento = newMsg.values.T2Oc;\n    metadata.Reference=metadata.shared_T2O_reference;\n    metadata.Deltaperc=newMsg.values.Deltaperc_T2O;\n    metadata.Body=metadata.deviceName+\" \"+metadata.shared_Installazione+\": \"+metadata.time+\" - Movimento di \"+metadata.Movimento+\" anomalo di \"+metadata.tempo_movimento+\"s invece che \"+metadata.Reference+\"s (\"+metadata.Deltaperc+\"%).\" \n}\nelse if(Math.abs(Number(newMsg.values.Deltaperc_T2C)) > Number(newMsg.values.T2CS_perc))\n{\n    metadata.Movimento=\"Chiusura\";\n    metadata.tempo_movimento = newMsg.values.T2Cc;\n    metadata.Reference=metadata.shared_T2C_reference;\n    metadata.Deltaperc=newMsg.values.Deltaperc_T2C;\n    metadata.Body=metadata.deviceName+\" \"+metadata.shared_Installazione+\": \" +metadata.time+\" - Movimento di \"+metadata.Movimento+\" anomalo di \"+metadata.tempo_movimento+\"s invece che \"+metadata.Reference+\"s (\"+metadata.Deltaperc+\"%).\" \n}\n*/\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        },
+        "externalId": null
+      }
+    ],
+    "connections": [
+      {
+        "fromIndex": 0,
+        "toIndex": 1,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 3,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 2,
+        "toIndex": 0,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 3,
+        "toIndex": 4,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 4,
+        "toIndex": 5,
+        "type": "True"
+      },
+      {
+        "fromIndex": 4,
+        "toIndex": 10,
+        "type": "True"
+      },
+      {
+        "fromIndex": 5,
+        "toIndex": 6,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 8,
+        "toIndex": 7,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 9,
+        "toIndex": 2,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 10,
+        "toIndex": 8,
+        "type": "Success"
+      }
+    ],
+    "ruleChainConnections": null
+  }
+}

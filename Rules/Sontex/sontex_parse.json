@@ -1,0 +1,101 @@
+{
+  "ruleChain": {
+    "additionalInfo": {
+      "description": "Decodifica dei messaggi MBUS - LoRa"
+    },
+    "name": "Sontex_parse",
+    "type": "CORE",
+    "firstRuleNodeId": null,
+    "root": false,
+    "debugMode": false,
+    "configuration": null,
+    "externalId": null
+  },
+  "metadata": {
+    "firstNodeIndex": 3,
+    "nodes": [
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 881,
+          "layoutY": 157
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Decode Sontex Message",
+        "debugMode": true,
+        "singletonMode": false,
+        "configuration": {
+          "scriptLang": "JS",
+          "jsScript": "//var msg={}; \n//msg.MSG=\"78046d2c11e727036e000000426ce2fa436e0000005259000005ff2d0000803f8520ff2d0000803f0259010b0265190b1259160b8310fd3100000082106c010182206ce52702ff2c000002fd66d00e0c78033943298110fd610001fd0908\";\nvar newMsg={}; \n\n\nvar PayloadStruct = {} ;\nPayloadStruct[\"0C78\"] = [\"FabricationNunmber\",\"A32\",2,6,DecodeA32];\nPayloadStruct[\"046D\"] = [\"CurrentDateTime\",\"F32\",2,6,DecodeF32];\nPayloadStruct[\"036E\"] = [\"TotalizerOfHeating\",\"B24\",2,5,DecodeB24];\nPayloadStruct[\"426C\"] = [\"SetDay\",\"G16\",2,4,DecodeG16];\nPayloadStruct[\"436E\"] = [\"TotalizeStoredAtSetDay\",\"B24\",2,5,DecodeB24];\nPayloadStruct[\"02FF\"] = [\"FlagsError\",\"D16\",3,5,DecodeD16];\nPayloadStruct[\"0259\"] = [\"RadiatorTemperature\",\"B16\",2,4,DecodeB16];\nPayloadStruct[\"0265\"] = [\"AmbientTemperature\",\"B16\",2,4,DecodeB16];\nPayloadStruct[\"02FD\"] = [\"StateOfParameters\",\"D16\",3,5,DecodeB16];\nPayloadStruct[\"0BFD\"] = [\"InternalVersion\",\"A24\",3,6,DecodeA24];\nPayloadStruct[\"5259\"] = [\"RadiatorMaxTempOfPreviusPeriod\",\"B16\",2,4,DecodeB16];\nPayloadStruct[\"1259\"] = [\"RadiatorMaxTempOfCurrentPeriod\",\"B16\",2,4,DecodeB16];\nPayloadStruct[\"8310\"] = [\"FraudDuration\",\"B24\",4,7,DecodeB24];\nPayloadStruct[\"8210\"] = [\"DateOfTheLastFraud\", \"G16\",3,5,DecodeG16];\nPayloadStruct[\"8220\"] = [\"CommissionigDate\",\"G16\",3,5,DecodeG16];\nPayloadStruct[\"05FF\"] = [\"UnitsFactorKc\",\"H32\",3,7,DecodeH32];\nPayloadStruct[\"8520\"] = [\"UnitsFactorKq\",\"H32\",4,8,DecodeH32];\nPayloadStruct[\"8110\"] = [\"FraudConter\", \"C8\",4,5,DecodeC8];\nPayloadStruct[\"01FD\"] = [\"DeviceType\", \"C8\",3,4,DecodeC8];\n\n//msg.MSG=msg;\n\n\n// Decode uplink function.\n//\n// Input is an object with the following fields:\n// - bytes = Byte array containing the uplink payload, e.g. [255, 230, 255, 0]\n// - fPort = Uplink fPort.\n// - variables = Object containing the configured device variables.\n//\n// Output must be an object with the following fields:\n// - data = Object representing the decoded payload.\nfunction decodeUplink(input) {\n//hexstring = bytesToHex(input.bytes).toUpperCase();\nhexstring = (input);\n\n   // console.log(hexstring);\n    var data ={};\n    var size = hexstring.length\n    var currentposition=2;\n    var result = {};\n    while (currentposition < size){\n        header = hexstring.substr(currentposition,4).toUpperCase();\n        \n        //console.log(header);\n        \n        callback = PayloadStruct[header][4];\n        //console.log(callback);\n        var data1 = hexstring.substr(currentposition +\nPayloadStruct[header][2] *2  ,PayloadStruct[header][3]*2 -\nPayloadStruct[header][2]*2 );\n        //console.log(data);\n        //console.log(callback(data));\n\n        data[PayloadStruct[header][0]] = callback(data1);\n        currentposition += PayloadStruct[header][3]*2;\n\n    }\n    //console.log(data)\n\n    return data;\n}\n\nnewMsg=decodeUplink(msg.MSG);\n\nreturn {msg: newMsg, metadata: metadata, msgType: msgType};\n\n// Convert a hex string to a byte array\nfunction hexToBytes(hex) {\n    var bytes = [];\n    for (var c = 0; c < hex.length; c += 2)\n        bytes.push(parseInt(hex.substr(c, 2), 16));\n    return bytes;\n}\n\n// Convert a byte array to a hex string\nfunction bytesToHex(bytes) {\n    var hex = [];\n    for (var i = 0; i < bytes.length; i++) {\n        var current = bytes[i] < 0 ? bytes[i] + 256 : bytes[i];\n        hex.push((current >>> 4).toString(16));\n        hex.push((current & 0xF).toString(16));\n    }\n    return hex.join(\"\");\n}\n\nfunction byte2bits(a)\n{\n\n    var tmp = \"\";\n    for(var i = 128; i >= 1; i /= 2)\n        tmp += a&i?'1':'0';\n\n\n    return tmp;\n}\nfunction split2Bits(a, n)\n{\n    var buff = \"\";\n    var b = [];\n\n    for(var i = 0; i < a.length; i++)\n    {\n        buff += byte2bits(a[i]);\n        while(buff.length >= n)\n        {\n            b.push(buff.substr(0, n));\n            buff = buff.substr(n);\n        }\n    }\n    return b;\n//dav    return [b, buff];\n}\n\nfunction DecodeF32(bytes) {\n\n    var DataBytes = hexToBytes(bytes);\n\n    var b ,r,minutes=0,count,BitMinutes,hours = 0 , BitHours , days =\n0 , BitDays, months = 0 , BitMonths , years=0, BitYears , result = [];\n    b = split2Bits(DataBytes,8);\n//dav    [b,r] = split2Bits(DataBytes,8);\n    BitMinutes = b[0]\n\n    for(var i=0 ; i< BitMinutes.length  ; i++)\n    {\n        if (BitMinutes[i] == \"1\")\n        {\n            minutes += Math.pow(2, (7 - i));\n//dav            minutes += 2**(7 - i);\n        }\n    }\n    //console.log(\"Minutes: \" + minutes)\n    BitHours = b[1]\n\n    for(var i=0 ; i< BitHours.length  ; i++)\n    {\n        if (BitHours[i] == \"1\")\n        {\n            hours += Math.pow(2, (7 - i));\n//dav            hours += 2**(7 - i);\n        }\n    }\n    //console.log(\"hours: \" + hours)\n\n\n    BitDays = b[2]\n\n    for(var i=3 ; i< 8  ; i++)\n    {\n        if (BitDays[i] == \"1\")\n        {\n            days += Math.pow(2, (7 - i));\n//dav            days += 2**(7 - i);\n        }\n    }\n    //console.log(\"days: \" + days)\n\n\n    BitMonths = b[3]\n    for(var i=3 ; i< 8  ; i++)\n    {\n        if (BitMonths[i] == \"1\")\n        {\n            months += Math.pow(2, (7 - i));\n//dav            months += 2**(7 - i);\n        }\n    }\n    //console.log(\"Months: \" + months)\n\n\n    BitYears = b[2] ;\n    for(var i=0 ; i< 3  ; i++)\n    {\n        if (BitYears[i] == \"1\")\n        {\n            years += Math.pow(2, (2 - i));\n//dav            years += 2**(2 - i);\n        }\n    }\n\n\n    BitYears = b[3]\n\n    for(var i=0 ; i< 4  ; i++)\n    {\n        if (BitYears[i] == \"1\")\n        {\n            years += Math.pow(2, (6 - i));\n//dav            years += 2**(6 - i);\n        }\n    }\n    //console.log(\"Years: \" + years)\n    result.push(minutes);\n    result.push(hours);\n    result.push(days);\n    result.push(months);\n    result.push(years);\n    return result;\n\n}\n\n\nfunction DecodeA32(bytes){\n    var serial = \"\",result = [];\n    for (i = 7 ;i> 0 ; i-=2 ){\n        serial += bytes.substr(i-1,2)\n\n    }\n    //console.log(\"Fabrication Number: \"+serial)\n    result.push(serial);\n    return result;\n\n}\n\nfunction DecodeB24(bytes){\n    DataBytes = hexToBytes(bytes)\n\n    var b ,r,currentbyte,result=0,results = [];\n    b = split2Bits(DataBytes,8);\n//dav    [b,r] = split2Bits(DataBytes,8);\n    //console.log(b);\n    currentbyte = b[2];\n    for(var i = 1;i<8 ; i++ )\n    {\n        if (currentbyte[i] == \"1\")\n        {\n            result += Math.pow(2, (22 - i));\n//dav            result += 2**(22-i);\n            //console.log(\"Primo byte\");\n        }\n    }\n    currentbyte = b[1];\n    //console.log(currentbyte);\n    for(var i = 0;i<8 ; i++ )\n    {\n        if (currentbyte[i] == \"1\")\n        {\n            result += Math.pow(2, (15 - i));\n//dav            result += 2**(15-i);\n            //console.log(\"Secondo byte\" , i);\n        }\n    }\n    currentbyte = b[0];\n    //console.log(currentbyte);\n    for(var i = 0;i<8 ; i++ )\n    {\n        if (currentbyte[i] == \"1\")\n        {\n            result += Math.pow(2, (7 - i));\n//dav            result += 2**(7-i);\n            //console.log(\"Terzo byte\",i);\n        }\n    }\n\n    //console.log(\"Results: \"+ result)\n    results.push(result);\n    return results;\n}\n\nfunction DecodeG16(bytes){\n    DataBytes = hexToBytes(bytes)\n\n    var b ,r,currentbyte,month=0,day=0,result = [];\n    b = split2Bits(DataBytes,8);\n//dav    [b,r] = split2Bits(DataBytes,8);\n    currentbyte=b[0]\n    for(var i = 3 ; i<8;i++){\n        if (currentbyte[i] == \"1\"){\n            day += Math.pow(2, (7 - i));\n//dav            day+=2**(7-i)\n        }\n    }\n\n    //console.log(\"Day: \" + day)\n    currentbyte=b[1]\n    for(var i = 4 ; i<8;i++){\n        if (currentbyte[i] == \"1\"){\n            month += Math.pow(2, (7 - i));\n//dav            month+=2**(7-i)\n        }\n    }\n    //console.log(\"Month: \" + month)\n    result.push(day);\n    result.push(month);\n    return result;\n}\nfunction DecodeD16(bytes){\n    DataBytes = hexToBytes(bytes)\n\n    var b ,r,currentbyte,result=[];\n    b = split2Bits(DataBytes,8);\n//dav    [b,r] = split2Bits(DataBytes,8);\n    //console.log(b);\n    result.push(b);\n    return result;\n\n}\nfunction DecodeB16(bytes){\n    DataBytes = hexToBytes(bytes)\n\n    var b ,r,currentbyte,result=0,results=[];\n    b = split2Bits(DataBytes,8);\n//dav    [b,r] = split2Bits(DataBytes,8);\n    //console.log(b);\n\n    currentbyte = b[1];\n    //console.log(currentbyte);\n    for(var i = 0;i<8 ; i++ )\n    {\n        if (currentbyte[i] == \"1\")\n        {\n            result += Math.pow(2, (15 - i));\n//dav            result += 2**(15-i);\n            //console.log(\"Secondo byte\" , i);\n        }\n    }\n    currentbyte = b[0];\n    //console.log(currentbyte);\n    for(var i = 0;i<8 ; i++ )\n    {\n        if (currentbyte[i] == \"1\")\n        {\n            result += Math.pow(2, (7 - i));\n//dav            result += 2**(7-i);\n            //console.log(\"Terzo byte\",i);\n        }\n    }\n\n    //console.log(\"Results: \"+ result)\n    results.push(result);\n    return results;\n\n}\nfunction DecodeH32(bytes){\n    DataBytes = hexToBytes(bytes);\n    var bb = [],result = [];\n    for (var i = 3 ; i> -1 ;i--){\n        bb.push(DataBytes[i])\n    }\n    //console.log(DataBytes);\n    //console.log(bb);\n\n\n    var buf = new Uint8Array(bb).buffer\n    // Create a data view of it\n    var view = new DataView(buf);\n\n    var num = view.getFloat32(0);\n    // Done\n    //console.log(num);\n    result.push(num)\n    return result;\n\n}\nfunction DecodeA24(bytes){\n    var result = [];\n    result.push(0);\n    return result;\n\n}\n\nfunction DecodeC8 (bytes){\n    DataBytes = hexToBytes(bytes);\n    //console.log(DataBytes[0])\n    return DataBytes;\n\n}\n\n\n\n\n\n\n\n\n",
+          "tbelScript": null
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 1161,
+          "layoutY": 158
+        },
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgTimeseriesNode",
+        "name": "save telemetry",
+        "debugMode": true,
+        "singletonMode": false,
+        "configuration": {
+          "defaultTTL": 0
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": null,
+          "layoutX": 603,
+          "layoutY": 161
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "text to hex",
+        "debugMode": true,
+        "singletonMode": false,
+        "configuration": {
+          "scriptLang": "JS",
+          "jsScript": "var Newmsg={};\n\nNewmsg.MSG=(ascii_to_hexa(msg.Message));\n\n\nreturn {msg: Newmsg, metadata: metadata, msgType: msgType};\n\n\n/*function ascii_to_hexa(str)\n  {\n\tvar arr1 = [];\n\tfor (var n = 0, l = str.length; n < l; n ++) \n     {\n\t\tvar hex = Number(str.charCodeAt(n)).toString(16);\n\t\tarr1.push(hex);\n\t }\n\treturn arr1.join('');\n   }\n*/\n\nfunction ascii_to_hexa(str)\n  {\n\tvar arr1 = [];\n\tfor (var n = 0, l = str.length; n < l; n ++) \n     {\n//\t\tvar hex = Number(str.charCodeAt(n)).toString(16);\n       \n\t   var hex = Number(str.charCodeAt(n));\n       if(hex<16){\n        var hex1 = \"0\"+hex.toString(16);\n        var hex2=(hex1.substr(hex.length-2));\n       }\n       else{var hex2 = Number(str.charCodeAt(n)).toString(16);}\n\t\t\n\t\tarr1.push(hex2);\n\t }\n\treturn arr1.join('');\n   }\n  \n",
+          "tbelScript": null
+        },
+        "externalId": null
+      },
+      {
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 290,
+          "layoutY": 158
+        },
+        "type": "org.thingsboard.rule.engine.filter.TbMsgTypeSwitchNode",
+        "name": "switch",
+        "debugMode": false,
+        "singletonMode": false,
+        "configuration": {
+          "version": 0
+        },
+        "externalId": null
+      }
+    ],
+    "connections": [
+      {
+        "fromIndex": 0,
+        "toIndex": 1,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 2,
+        "toIndex": 0,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 3,
+        "toIndex": 2,
+        "type": "Post telemetry"
+      }
+    ],
+    "ruleChainConnections": null
+  }
+}
